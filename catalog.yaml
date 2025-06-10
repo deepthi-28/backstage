@@ -8,8 +8,5 @@ metadata:
     - backend
 spec:
   type: service
-  owner: group:default/deepthi
+  owner: deepthi
   lifecycle: production
-  system: my-system
-  dependsOn:
-    - component:default/another-service
