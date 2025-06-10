@@ -1,0 +1,12 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: my-service
+  description: My demo service
+  tags:
+    - java
+    - backend
+spec:
+  type: service
+  owner: deepthi
+  lifecycle: production
