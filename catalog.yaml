@@ -12,4 +12,3 @@ spec:
   owner: deepthi
   lifecycle: production
   system: my-service
-  providesApis: [example-grpc-api]
