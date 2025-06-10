@@ -8,5 +8,8 @@ metadata:
     - backend
 spec:
   type: service
+  lifecycle: experimental
   owner: deepthi
   lifecycle: production
+  system: my-service
+  providesApis: [example-grpc-api]
