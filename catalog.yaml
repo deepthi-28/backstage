@@ -10,4 +10,3 @@ spec:
   type: service
   owner: deepthi
   lifecycle: production
-  system: service
