@@ -10,6 +10,6 @@ spec:
   type: service
   owner: deepthi
   lifecycle: production
-   system: my-system
+  system: my-system
   dependsOn:
     - component:default/another-service
