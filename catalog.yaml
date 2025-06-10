@@ -8,7 +8,6 @@ metadata:
     - backend
 spec:
   type: service
-  lifecycle: experimental
   owner: deepthi
   lifecycle: production
   system: service
