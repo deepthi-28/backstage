@@ -11,4 +11,4 @@ spec:
   lifecycle: experimental
   owner: deepthi
   lifecycle: production
-  system: my-service
+  system: service
