@@ -17,3 +17,5 @@ spec:
     - api:default/my-service-api
   consumesApis:
     - api:default/payment-api
+  targets:
+    - ./group.yaml
