@@ -1,8 +1,12 @@
 apiVersion: backstage.io/v1alpha1
-kind: User
+kind: Group
 metadata:
-  name: deepthi-28
+  name: deepthi-28                   # Unique name, used as references (e.g., owner: my-team)
+  description: The My Team group   # (Optional) Description for the group
 spec:
+  type: team                       # Type can be 'team', 'department', etc.
   profile:
-    displayName: Deepthi
-    email: deepthyajith22@gmail.com
+    displayName: My Team           # This will be shown in the Backstage UI
+    email: deepthyajith22@gmail.com      # (Optional) Team email address
+  children: []                     # (Optional) List of child group names
+  members: []   
