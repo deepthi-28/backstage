@@ -8,14 +8,5 @@ metadata:
     - backend
 spec:
   type: service
-  lifecycle: production
   owner: group:default/deepthi
-  system: system:default/my-system
-  dependsOn:
-    - component:default/other-service
-  providesApis:
-    - api:default/my-service-api
-  consumesApis:
-    - api:default/payment-api
-  targets:
-    - ./group.yaml
+  lifecycle: production
