@@ -1,0 +1,10 @@
+apiVersion: backstage.io/v1alpha1
+kind: Group
+metadata:
+  name: deepthi
+  description: Owner group for Deepthi
+spec:
+  type: team
+  profile:
+    displayName: Deepthi Ajith
+  children: []
