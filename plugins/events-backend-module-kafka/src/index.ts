@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 The Backstage Authors
+ * Copyright 2025 The Backstage Authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,21 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import yargs from 'yargs';
-import { createCliPlugin } from '../../wiring/factory';
 
-export default createCliPlugin({
-  pluginId: 'info',
-  init: async reg => {
-    reg.addCommand({
-      path: ['info'],
-      description: 'Show helpful information for debugging and reporting bugs',
-      execute: async ({ args }) => {
-        yargs().parse(args);
-        const { default: command } =
-          require('./commands/info') as typeof import('./commands/info');
-        await command();
-      },
-    });
-  },
-});
+/**
+ * The module "kafka" for the Backstage backend plugin "events"
+ * adding an Kafka-based publisher,
+ * receiving events from an Kafka topic and passing it to the
+ * internal event broker.
+ *
+ * @packageDocumentation
+ */
+
+export { eventsModuleKafkaConsumingEventPublisher as default } from './service/eventsModuleKafkaConsumingEventPublisher';
