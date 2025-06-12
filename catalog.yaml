@@ -10,12 +10,10 @@ spec:
   type: service
   lifecycle: production
   owner: group:default/deepthi
-  system: default/my-system
+  system: system:default/my-system
   dependsOn:
     - component:default/other-service
   providesApis:
-    - default/my-service-api
+    - api:default/my-service-api
   consumesApis:
-    - default/payment-api
-  targets:
-    - group.yaml
+    - api:default/payment-api
