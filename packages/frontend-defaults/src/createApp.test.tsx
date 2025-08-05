@@ -21,13 +21,14 @@ import {
   createExtension,
   PageBlueprint,
   createFrontendPlugin,
+  createFrontendFeatureLoader,
   ThemeBlueprint,
   createFrontendModule,
   useAppNode,
   FrontendPluginInfo,
 } from '@backstage/frontend-plugin-api';
 import { screen, waitFor } from '@testing-library/react';
-import { CreateAppFeatureLoader, createApp } from './createApp';
+import { createApp } from './createApp';
 import { mockApis, renderWithEffects } from '@backstage/test-utils';
 import { featureFlagsApiRef, useApi } from '@backstage/core-plugin-api';
 import { default as appPluginOriginal } from '@backstage/plugin-app';
@@ -91,7 +92,7 @@ describe('createApp', () => {
           extensions: [
             PageBlueprint.make({
               params: {
-                defaultPath: '/',
+                path: '/',
                 loader: async () => <div>First Page</div>,
               },
             }),
@@ -102,7 +103,7 @@ describe('createApp', () => {
           extensions: [
             PageBlueprint.make({
               params: {
-                defaultPath: '/',
+                path: '/',
                 loader: async () => <div>Last Page</div>,
               },
             }),
@@ -130,7 +131,7 @@ describe('createApp', () => {
       );
 
       useEffect(() => {
-        appNode?.spec.source?.info().then(setInfo);
+        appNode?.spec.plugin?.info().then(setInfo);
       }, [appNode]);
 
       return <div>Package name: {info?.packageName}</div>;
@@ -145,7 +146,7 @@ describe('createApp', () => {
           extensions: [
             PageBlueprint.make({
               params: {
-                defaultPath: '/',
+                path: '/',
                 loader: async () => <TestComponent />,
               },
             }),
@@ -169,28 +170,21 @@ describe('createApp', () => {
   });
 
   it('should support feature loaders', async () => {
-    const loader: CreateAppFeatureLoader = {
-      getLoaderName() {
-        return 'test-loader';
-      },
-      async load({ config }) {
-        return {
-          features: [
-            createFrontendPlugin({
-              pluginId: 'test',
-              extensions: [
-                PageBlueprint.make({
-                  params: {
-                    defaultPath: '/',
-                    loader: async () => <div>{config.getString('key')}</div>,
-                  },
-                }),
-              ],
+    const loader = createFrontendFeatureLoader({
+      async *loader({ config }) {
+        yield createFrontendPlugin({
+          pluginId: 'test',
+          extensions: [
+            PageBlueprint.make({
+              params: {
+                path: '/',
+                loader: async () => <div>{config.getString('key')}</div>,
+              },
             }),
           ],
-        };
+        });
       },
-    };
+    });
 
     const app = createApp({
       configLoader: async () => ({
@@ -207,14 +201,11 @@ describe('createApp', () => {
   });
 
   it('should propagate errors thrown by feature loaders', async () => {
-    const loader: CreateAppFeatureLoader = {
-      getLoaderName() {
-        return 'test-loader';
-      },
-      async load() {
+    const loader = createFrontendFeatureLoader({
+      async loader() {
         throw new TypeError('boom');
       },
-    };
+    });
 
     const app = createApp({
       configLoader: async () => ({
@@ -223,10 +214,8 @@ describe('createApp', () => {
       features: [loader],
     });
 
-    await expect(
-      renderWithEffects(app.createRoot()),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(
-      `"Failed to read frontend features from loader 'test-loader', TypeError: boom"`,
+    await expect(renderWithEffects(app.createRoot())).rejects.toThrow(
+      /Failed to read frontend features from loader created at '.*\/createApp\.test\.tsx:\d+:\d+': TypeError: boom/,
     );
   });
 
@@ -282,6 +271,38 @@ describe('createApp', () => {
     ).resolves.toBeInTheDocument();
   });
 
+  it('should allow unknown extension config if the flag is set', async () => {
+    const app = createApp({
+      configLoader: async () => ({
+        config: mockApis.config({
+          data: {
+            app: {
+              extensions: [{ 'unknown:lols/wut': false }],
+            },
+          },
+        }),
+      }),
+      features: [
+        appPlugin,
+        createFrontendPlugin({
+          pluginId: 'test',
+          extensions: [
+            PageBlueprint.make({
+              params: {
+                path: '/',
+                loader: async () => <div>Derp</div>,
+              },
+            }),
+          ],
+        }),
+      ],
+      flags: { allowUnknownExtensionConfig: true },
+    });
+
+    await renderWithEffects(app.createRoot());
+
+    await expect(screen.findByText('Derp')).resolves.toBeInTheDocument();
+  });
   it('should make the app structure available through the AppTreeApi', async () => {
     let appTreeApi: AppTreeApi | undefined = undefined;
 
@@ -294,7 +315,7 @@ describe('createApp', () => {
           extensions: [
             PageBlueprint.make({
               params: {
-                defaultPath: '/',
+                path: '/',
                 loader: async () => {
                   const Component = () => {
                     appTreeApi = useApi(appTreeApiRef);
@@ -456,7 +477,7 @@ describe('createApp', () => {
             PageBlueprint.make({
               name: 'test-page',
               params: {
-                defaultPath: '/',
+                path: '/',
                 loader: async () => <>Test Page</>,
               },
             }),

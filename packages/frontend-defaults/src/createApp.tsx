@@ -37,36 +37,12 @@ import { discoverAvailableFeatures } from './discovery';
 import { resolveAsyncFeatures } from './resolution';
 
 /**
- * A source of dynamically loaded frontend features.
- *
- * @public
- * @deprecated Use the {@link @backstage/frontend-plugin-api#createFrontendFeatureLoader} function instead.
- */
-export interface CreateAppFeatureLoader {
-  /**
-   * Returns name of this loader. suitable for showing to users.
-   */
-  getLoaderName(): string;
-
-  /**
-   * Loads a number of features dynamically.
-   */
-  load(options: { config: ConfigApi }): Promise<{
-    features: FrontendFeature[];
-  }>;
-}
-
-/**
  * Options for {@link createApp}.
  *
  * @public
  */
 export interface CreateAppOptions {
-  features?: (
-    | FrontendFeature
-    | FrontendFeatureLoader
-    | CreateAppFeatureLoader
-  )[];
+  features?: (FrontendFeature | FrontendFeatureLoader)[];
   configLoader?: () => Promise<{ config: ConfigApi }>;
   bindRoutes?(context: { bind: CreateAppRouteBinder }): void;
   /**
@@ -80,6 +56,7 @@ export interface CreateAppOptions {
     | ExtensionFactoryMiddleware
     | ExtensionFactoryMiddleware[];
   pluginInfoResolver?: FrontendPluginInfoResolver;
+  flags?: { allowUnknownExtensionConfig?: boolean };
 }
 
 /**
@@ -115,6 +92,7 @@ export function createApp(options?: CreateAppOptions): {
       bindRoutes: options?.bindRoutes,
       extensionFactoryMiddleware: options?.extensionFactoryMiddleware,
       pluginInfoResolver: options?.pluginInfoResolver,
+      flags: options?.flags,
     });
 
     const rootEl = app.tree.root.instance!.getData(

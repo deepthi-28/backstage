@@ -4,8 +4,8 @@
 
 ```ts
 import { AnyApiFactory } from '@backstage/frontend-plugin-api';
-import { AnyExtensionDataRef } from '@backstage/frontend-plugin-api';
 import { AnyRouteRefParams } from '@backstage/frontend-plugin-api';
+import { ApiFactory } from '@backstage/frontend-plugin-api';
 import { ConfigurableExtensionDataRef } from '@backstage/frontend-plugin-api';
 import { defaultEntityContentGroups } from '@backstage/plugin-catalog-react/alpha';
 import { Entity } from '@backstage/catalog-model';
@@ -13,6 +13,8 @@ import { EntityCardType } from '@backstage/plugin-catalog-react/alpha';
 import { EntityContentLayoutProps } from '@backstage/plugin-catalog-react/alpha';
 import { EntityContextMenuItemParams } from '@backstage/plugin-catalog-react/alpha';
 import { EntityPredicate } from '@backstage/plugin-catalog-react/alpha';
+import { ExtensionBlueprintParams } from '@backstage/frontend-plugin-api';
+import { ExtensionDataRef } from '@backstage/frontend-plugin-api';
 import { ExtensionDefinition } from '@backstage/frontend-plugin-api';
 import { ExtensionInput } from '@backstage/frontend-plugin-api';
 import { ExternalRouteRef } from '@backstage/frontend-plugin-api';
@@ -146,9 +148,13 @@ const _default: FrontendPlugin<
         {}
       >;
       inputs: {};
-      params: {
-        factory: AnyApiFactory;
-      };
+      params: <
+        TApi,
+        TImpl extends TApi,
+        TDeps extends { [name in string]: unknown },
+      >(
+        params: ApiFactory<TApi, TImpl, TDeps>,
+      ) => ExtensionBlueprintParams<AnyApiFactory>;
     }>;
     'api:catalog/entity-presentation': ExtensionDefinition<{
       kind: 'api';
@@ -161,9 +167,13 @@ const _default: FrontendPlugin<
         {}
       >;
       inputs: {};
-      params: {
-        factory: AnyApiFactory;
-      };
+      params: <
+        TApi,
+        TImpl extends TApi,
+        TDeps extends { [name in string]: unknown },
+      >(
+        params: ApiFactory<TApi, TImpl, TDeps>,
+      ) => ExtensionBlueprintParams<AnyApiFactory>;
     }>;
     'api:catalog/starred-entities': ExtensionDefinition<{
       kind: 'api';
@@ -176,9 +186,13 @@ const _default: FrontendPlugin<
         {}
       >;
       inputs: {};
-      params: {
-        factory: AnyApiFactory;
-      };
+      params: <
+        TApi,
+        TImpl extends TApi,
+        TDeps extends { [name in string]: unknown },
+      >(
+        params: ApiFactory<TApi, TImpl, TDeps>,
+      ) => ExtensionBlueprintParams<AnyApiFactory>;
     }>;
     'catalog-filter:catalog/kind': ExtensionDefinition<{
       config: {
@@ -194,7 +208,7 @@ const _default: FrontendPlugin<
       >;
       inputs: {
         [x: string]: ExtensionInput<
-          AnyExtensionDataRef,
+          ExtensionDataRef,
           {
             optional: boolean;
             singleton: boolean;
@@ -236,7 +250,7 @@ const _default: FrontendPlugin<
       >;
       inputs: {
         [x: string]: ExtensionInput<
-          AnyExtensionDataRef,
+          ExtensionDataRef,
           {
             optional: boolean;
             singleton: boolean;
@@ -263,7 +277,7 @@ const _default: FrontendPlugin<
       >;
       inputs: {
         [x: string]: ExtensionInput<
-          AnyExtensionDataRef,
+          ExtensionDataRef,
           {
             optional: boolean;
             singleton: boolean;
@@ -879,10 +893,13 @@ const _default: FrontendPlugin<
       kind: 'entity-content';
       name: 'overview';
       params: {
+        defaultPath?: [Error: `Use the 'path' param instead`];
+        path: string;
+        defaultTitle?: [Error: `Use the 'title' param instead`];
+        title: string;
+        defaultGroup?: [Error: `Use the 'group' param instead`];
+        group?: keyof defaultEntityContentGroups | (string & {});
         loader: () => Promise<JSX.Element>;
-        defaultPath: string;
-        defaultTitle: string;
-        defaultGroup?: keyof defaultEntityContentGroups | (string & {});
         routeRef?: RouteRef;
         filter?: string | EntityPredicate | ((entity: Entity) => boolean);
       };
@@ -1012,9 +1029,26 @@ const _default: FrontendPlugin<
     }>;
     'page:catalog': ExtensionDefinition<{
       config: {
+        pagination:
+          | boolean
+          | {
+              mode: 'offset' | 'cursor';
+              offset?: number | undefined;
+              limit?: number | undefined;
+            };
+      } & {
         path: string | undefined;
       };
       configInput: {
+        pagination?:
+          | boolean
+          | {
+              mode: 'offset' | 'cursor';
+              offset?: number | undefined;
+              limit?: number | undefined;
+            }
+          | undefined;
+      } & {
         path?: string | undefined;
       };
       output:
@@ -1039,7 +1073,8 @@ const _default: FrontendPlugin<
       kind: 'page';
       name: undefined;
       params: {
-        defaultPath: string;
+        defaultPath?: [Error: `Use the 'path' param instead`];
+        path: string;
         loader: () => Promise<JSX.Element>;
         routeRef?: RouteRef;
       };
@@ -1080,17 +1115,24 @@ const _default: FrontendPlugin<
             }
           >;
       inputs: {
-        header: ExtensionInput<
-          ConfigurableExtensionDataRef<
-            JSX_2.Element,
-            'core.reactElement',
-            {
-              optional: true;
-            }
-          >,
+        headers: ExtensionInput<
+          | ConfigurableExtensionDataRef<
+              (entity: Entity) => boolean,
+              'catalog.entity-filter-function',
+              {
+                optional: true;
+              }
+            >
+          | ConfigurableExtensionDataRef<
+              JSX_2.Element,
+              'core.reactElement',
+              {
+                optional: true;
+              }
+            >,
           {
-            singleton: true;
-            optional: true;
+            singleton: false;
+            optional: false;
           }
         >;
         contents: ExtensionInput<
@@ -1152,7 +1194,8 @@ const _default: FrontendPlugin<
       kind: 'page';
       name: 'entity';
       params: {
-        defaultPath: string;
+        defaultPath?: [Error: `Use the 'path' param instead`];
+        path: string;
         loader: () => Promise<JSX.Element>;
         routeRef?: RouteRef;
       };

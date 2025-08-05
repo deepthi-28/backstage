@@ -75,7 +75,7 @@ const CatalogGraphPage = PageBlueprint.makeWithOverrides({
   },
   factory(originalFactory, { config }) {
     return originalFactory({
-      defaultPath: '/catalog-graph',
+      path: '/catalog-graph',
       routeRef: convertLegacyRouteRef(catalogGraphRouteRef),
       loader: () =>
         import('./components/CatalogGraphPage').then(m =>
@@ -96,3 +96,5 @@ export default createFrontendPlugin({
   },
   extensions: [CatalogGraphPage, CatalogGraphEntityCard],
 });
+
+export { catalogGraphTranslationRef } from './translation';
