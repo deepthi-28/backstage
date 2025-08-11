@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 The Backstage Authors
+ * Copyright 2025 The Backstage Authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,10 +14,17 @@
  * limitations under the License.
  */
 
-/**
- * Components used by Backstage plugins and apps
- *
- * @packageDocumentation
- */
+import { SwappableComponentRef } from '@backstage/frontend-plugin-api';
+import { OpaqueType } from '@internal/opaque';
 
-export * from '@backstage/ui';
+export const OpaqueSwappableComponentRef = OpaqueType.create<{
+  public: SwappableComponentRef;
+  versions: {
+    readonly version: 'v1';
+    readonly transformProps?: (props: object) => object;
+    readonly defaultComponent: (props: object) => JSX.Element | null;
+  };
+}>({
+  versions: ['v1'],
+  type: '@backstage/SwappableComponentRef',
+});
