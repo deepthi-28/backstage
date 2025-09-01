@@ -34,7 +34,6 @@ import {
   TemplateEditorLayoutFiles,
   TemplateEditorLayoutPreview,
   TemplateEditorLayoutConsole,
-  TemplateEditorPanels,
 } from './TemplateEditorLayout';
 import { TemplateEditorToolbar } from './TemplateEditorToolbar';
 import { TemplateEditorToolbarFileMenu } from './TemplateEditorToolbarFileMenu';
@@ -89,24 +88,17 @@ export const TemplateEditor = (props: {
           <TemplateEditorLayoutBrowser>
             <TemplateEditorBrowser onClose={closeDirectory} />
           </TemplateEditorLayoutBrowser>
-          <TemplateEditorPanels
-            autoSaveId="template-editor"
-            files={
-              <TemplateEditorLayoutFiles>
-                <TemplateEditorTextArea.DirectoryEditor errorText={errorText} />
-              </TemplateEditorLayoutFiles>
-            }
-            preview={
-              <TemplateEditorLayoutPreview>
-                <TemplateEditorForm.DirectoryEditorDryRun
-                  setErrorText={setErrorText}
-                  fieldExtensions={fieldExtensions}
-                  layouts={layouts}
-                  formProps={formProps}
-                />
-              </TemplateEditorLayoutPreview>
-            }
-          />
+          <TemplateEditorLayoutFiles>
+            <TemplateEditorTextArea.DirectoryEditor errorText={errorText} />
+          </TemplateEditorLayoutFiles>
+          <TemplateEditorLayoutPreview>
+            <TemplateEditorForm.DirectoryEditorDryRun
+              setErrorText={setErrorText}
+              fieldExtensions={fieldExtensions}
+              layouts={layouts}
+              formProps={formProps}
+            />
+          </TemplateEditorLayoutPreview>
           <TemplateEditorLayoutConsole>
             <DryRunResults />
           </TemplateEditorLayoutConsole>

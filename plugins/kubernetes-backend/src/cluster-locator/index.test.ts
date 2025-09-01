@@ -20,13 +20,10 @@ import {
   ANNOTATION_KUBERNETES_AUTH_PROVIDER,
 } from '@backstage/plugin-kubernetes-common';
 import { getCombinedClusterSupplier } from './index';
-import {
-  ClusterDetails,
-  AuthenticationStrategy,
-} from '@backstage/plugin-kubernetes-node';
+import { ClusterDetails } from '../types/types';
+import { AuthenticationStrategy, DispatchStrategy } from '../auth';
 import { mockCredentials, mockServices } from '@backstage/backend-test-utils';
 import { catalogServiceMock } from '@backstage/plugin-catalog-node/testUtils';
-import { DispatchStrategy } from '../auth';
 
 describe('getCombinedClusterSupplier', () => {
   it('should retrieve cluster details from config', async () => {

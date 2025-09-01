@@ -21,7 +21,7 @@ import { Box } from '../Box';
 import { Text } from '../Text';
 
 const meta = {
-  title: 'Backstage UI/Tabs',
+  title: 'Components/Tabs',
   component: Tabs,
 } satisfies Meta<typeof Tabs>;
 

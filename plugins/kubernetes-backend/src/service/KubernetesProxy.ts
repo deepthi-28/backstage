@@ -31,11 +31,8 @@ import type { Cluster } from '@kubernetes/client-node';
 import { createProxyMiddleware, RequestHandler } from 'http-proxy-middleware';
 import fs from 'fs-extra';
 
-import {
-  AuthenticationStrategy,
-  ClusterDetails,
-  KubernetesClustersSupplier,
-} from '@backstage/plugin-kubernetes-node';
+import { AuthenticationStrategy } from '../auth';
+import { ClusterDetails, KubernetesClustersSupplier } from '../types/types';
 
 import type { Request } from 'express';
 import { IncomingHttpHeaders } from 'http';
@@ -45,6 +42,7 @@ import {
   LoggerService,
   PermissionsService,
 } from '@backstage/backend-plugin-api';
+import { createLegacyAuthAdapters } from '@backstage/backend-common';
 
 export const APPLICATION_JSON: string = 'application/json';
 
@@ -82,7 +80,7 @@ export type KubernetesProxyOptions = {
   clusterSupplier: KubernetesClustersSupplier;
   authStrategy: AuthenticationStrategy;
   discovery: DiscoveryService;
-  httpAuth: HttpAuthService;
+  httpAuth?: HttpAuthService;
 };
 
 /**
@@ -101,7 +99,13 @@ export class KubernetesProxy {
     this.logger = options.logger;
     this.clusterSupplier = options.clusterSupplier;
     this.authStrategy = options.authStrategy;
-    this.httpAuth = options.httpAuth;
+
+    const legacy = createLegacyAuthAdapters({
+      discovery: options.discovery,
+      httpAuth: options.httpAuth,
+    });
+
+    this.httpAuth = legacy.httpAuth;
   }
 
   public createRequestHandler(

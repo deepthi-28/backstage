@@ -20,14 +20,8 @@ import { mockServices } from '../services';
 /**
  * A mock for error handler middleware that can be used in router tests.
  * @public
- *
- * @example
- * ```ts
- * const app = express();
- * app.use(mockErrorHandler());
- * ```
  */
-export function mockErrorHandler(_options?: {}, ..._args: never[]) {
+export function mockErrorHandler() {
   return MiddlewareFactory.create({
     config: mockServices.rootConfig(),
     logger: mockServices.rootLogger(),

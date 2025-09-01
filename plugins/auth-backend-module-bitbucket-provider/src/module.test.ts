@@ -52,7 +52,7 @@ describe('authModuleBitbucketProvider', () => {
     expect(res.status).toEqual(302);
 
     const nonceCookie = agent.jar.getCookie('bitbucket-nonce', {
-      domain: '127.0.0.1',
+      domain: 'localhost',
       path: '/api/auth/bitbucket/handler',
       script: false,
       secure: false,

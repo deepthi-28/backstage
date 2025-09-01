@@ -19,7 +19,6 @@ import { RuleOptions } from './types';
 const SIDEBAR_WIDTH = '224px';
 
 export default ({ theme, sidebar }: RuleOptions) => `
-
 /*==================  Layout  ==================*/
 
 /* mkdocs material v9 compat */

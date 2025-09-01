@@ -18,7 +18,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { Switch } from './Switch';
 
 const meta = {
-  title: 'Backstage UI/Switch',
+  title: 'Components/Switch',
   component: Switch,
 } satisfies Meta<typeof Switch>;
 

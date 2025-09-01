@@ -53,7 +53,7 @@ describe('authModuleOneLoginProvider', () => {
     expect(res.status).toEqual(302);
 
     const nonceCookie = agent.jar.getCookie('onelogin-nonce', {
-      domain: '127.0.0.1',
+      domain: 'localhost',
       path: '/api/auth/onelogin/handler',
       script: false,
       secure: false,

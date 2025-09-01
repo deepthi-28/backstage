@@ -13,7 +13,7 @@ import { Icon } from '@backstage/ui';
 import { usePlayground } from '@/utils/playground-context';
 
 const themes = [
-  { name: 'Backstage', value: 'backstage' },
+  { name: 'Backstage', value: 'default' },
   { name: 'Spotify', value: 'spotify' },
   { name: 'Custom theme', value: 'custom' },
 ];
@@ -23,7 +23,7 @@ export const ThemeNameSelector = () => {
 
   return (
     <Select
-      selectedKey={selectedThemeName || 'backstage'}
+      selectedKey={selectedThemeName || 'default'}
       onSelectionChange={setSelectedThemeName}
     >
       <Button className={styles.Select}>

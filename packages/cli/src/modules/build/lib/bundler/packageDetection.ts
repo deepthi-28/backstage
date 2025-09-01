@@ -19,7 +19,7 @@ import { Config, ConfigReader } from '@backstage/config';
 import chokidar from 'chokidar';
 import fs from 'fs-extra';
 import PQueue from 'p-queue';
-import { dirname, join as joinPath, resolve as resolvePath } from 'path';
+import { join as joinPath, resolve as resolvePath } from 'path';
 import { paths as cliPaths } from '../../../../lib/paths';
 
 const DETECTED_MODULES_MODULE_NAME = '__backstage-autodetected-plugins__';
@@ -107,7 +107,6 @@ async function detectPackages(
 const writeQueue = new PQueue({ concurrency: 1 });
 
 async function writeDetectedPackagesModule(
-  targetPath: string,
   pkgs: { name: string; export?: string; import: string }[],
 ) {
   const requirePackageScript = pkgs
@@ -119,19 +118,16 @@ async function writeDetectedPackagesModule(
     )
     .join(',');
 
-  await writeQueue.add(async () => {
-    const detectedModulesPath = joinPath(
-      targetPath,
-      'node_modules',
-      `${DETECTED_MODULES_MODULE_NAME}.js`,
-    );
-
-    await fs.ensureDir(dirname(detectedModulesPath));
-    await fs.writeFile(
-      detectedModulesPath,
+  await writeQueue.add(() =>
+    fs.writeFile(
+      joinPath(
+        cliPaths.targetRoot,
+        'node_modules',
+        `${DETECTED_MODULES_MODULE_NAME}.js`,
+      ),
       `window['__@backstage/discovered__'] = { modules: [${requirePackageScript}] };`,
-    );
-  });
+    ),
+  );
 }
 
 export async function createDetectedModulesEntryPoint(options: {
@@ -146,23 +142,11 @@ export async function createDetectedModulesEntryPoint(options: {
     return [];
   }
 
-  // Previous versions of the CLI would write the detected modules file to the
-  // root `node_modules`, this makes sure that doesn't exist to minimize risk of conflicts
-  const legacyDetectedModulesPath = joinPath(
-    cliPaths.targetRoot,
-    'node_modules',
-    `${DETECTED_MODULES_MODULE_NAME}.js`,
-  );
-  if (await fs.pathExists(legacyDetectedModulesPath)) {
-    await fs.remove(legacyDetectedModulesPath);
-  }
-
   if (watch) {
     const watcher = chokidar.watch(resolvePath(targetPath, 'package.json'));
 
     watcher.on('change', async () => {
       await writeDetectedPackagesModule(
-        targetPath,
         await detectPackages(targetPath, detectionConfig),
       );
       watch();
@@ -170,7 +154,6 @@ export async function createDetectedModulesEntryPoint(options: {
   }
 
   await writeDetectedPackagesModule(
-    targetPath,
     await detectPackages(targetPath, detectionConfig),
   );
 

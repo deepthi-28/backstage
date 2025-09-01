@@ -19,7 +19,7 @@ import { Flex } from './Flex';
 import { Text } from '../Text';
 
 const meta = {
-  title: 'Backstage UI/Flex',
+  title: 'Layout/Flex',
   component: Flex,
   argTypes: {
     align: {

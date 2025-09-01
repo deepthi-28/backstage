@@ -61,22 +61,23 @@ export class BackstageLoggerTransport extends Transport {
 
     const message = info[MESSAGE];
     const level = info[LEVEL];
+    const splat = info[SPLAT];
 
     switch (level) {
       case 'error':
-        this.backstageLogger.error(String(message));
+        this.backstageLogger.error(String(message), ...splat);
         break;
       case 'warn':
-        this.backstageLogger.warn(String(message));
+        this.backstageLogger.warn(String(message), ...splat);
         break;
       case 'info':
-        this.backstageLogger.info(String(message));
+        this.backstageLogger.info(String(message), ...splat);
         break;
       case 'debug':
-        this.backstageLogger.debug(String(message));
+        this.backstageLogger.debug(String(message), ...splat);
         break;
       default:
-        this.backstageLogger.info(String(message));
+        this.backstageLogger.info(String(message), ...splat);
     }
 
     this.taskContext.emitLog(message, { stepId: this.stepId });

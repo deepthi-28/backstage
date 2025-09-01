@@ -82,20 +82,11 @@ import ExtensionIcon from '@material-ui/icons/Extension';
 
 You can also use your own SVGs directly as icon components. Just make sure they
 are sized according to the Material UI's
-[SvgIcon](https://material-ui.com/api/svg-icon/) default of 24x24px, and wrap
-the SVG elements in a `SvgIcon` component like this:
+[SvgIcon](https://material-ui.com/api/svg-icon/) default of 24x24px, and set the
+extension to `.icon.svg`. For example:
 
 ```tsx
-import SvgIcon, { SvgIconProps } from '@material-ui/core/SvgIcon';
-
-export const ExampleIcon = (props: SvgIconProps) => (
-  <SvgIcon {...props}>
-    <g>
-      <path ... />
-      <path ... />
-    </g>
-  </SvgIcon>
-);
+import InternalToolIcon from './internal-tool.icon.svg';
 ```
 
 On mobile devices the `Sidebar` is displayed at the bottom of the screen. For

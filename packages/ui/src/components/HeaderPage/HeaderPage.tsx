@@ -15,13 +15,12 @@
  */
 
 import type { HeaderPageProps } from './types';
+import { Menu } from '../Menu';
 import { Text } from '../Text';
-import { RiArrowRightSLine } from '@remixicon/react';
+import { ButtonIcon } from '../ButtonIcon';
+import { RiMore2Line } from '@remixicon/react';
 import { Tabs, TabList, Tab } from '../Tabs';
 import { useStyles } from '../../hooks/useStyles';
-import { Container } from '../Container';
-import { Link } from '../Link';
-import { Fragment } from 'react/jsx-runtime';
 
 /**
  * A component that renders a header page.
@@ -29,34 +28,46 @@ import { Fragment } from 'react/jsx-runtime';
  * @public
  */
 export const HeaderPage = (props: HeaderPageProps) => {
-  const { title, tabs, customActions, breadcrumbs } = props;
+  const { title, menuItems, tabs, customActions } = props;
   const { classNames } = useStyles('HeaderPage');
 
   return (
-    <Container className={classNames.root}>
+    <div className={classNames.root}>
       <div className={classNames.content}>
-        <div className={classNames.breadcrumbs}>
-          {breadcrumbs &&
-            breadcrumbs.map(breadcrumb => (
-              <Fragment key={breadcrumb.label}>
-                <Link
-                  href={breadcrumb.href}
-                  variant="title-small"
-                  weight="bold"
-                  color="secondary"
-                  truncate
-                  style={{ maxWidth: '240px' }}
-                >
-                  {breadcrumb.label}
-                </Link>
-                <RiArrowRightSLine size={16} color="var(--bui-fg-secondary)" />
-              </Fragment>
-            ))}
-          <Text variant="title-small" weight="bold" as="h2">
-            {title}
-          </Text>
+        <Text variant="title-small" weight="bold" as="h2">
+          {title}
+        </Text>
+        <div className={classNames.controls}>
+          {customActions}
+          {menuItems && (
+            <Menu.Root>
+              <Menu.Trigger
+                render={props => (
+                  <ButtonIcon
+                    {...props}
+                    size="small"
+                    icon={<RiMore2Line />}
+                    variant="tertiary"
+                  />
+                )}
+              />
+              <Menu.Portal>
+                <Menu.Positioner sideOffset={4} align="end">
+                  <Menu.Popup>
+                    {menuItems.map(menuItem => (
+                      <Menu.Item
+                        key={menuItem.value}
+                        onClick={() => menuItem.onClick?.()}
+                      >
+                        {menuItem.label}
+                      </Menu.Item>
+                    ))}
+                  </Menu.Popup>
+                </Menu.Positioner>
+              </Menu.Portal>
+            </Menu.Root>
+          )}
         </div>
-        <div className={classNames.controls}>{customActions}</div>
       </div>
       {tabs && (
         <div className={classNames.tabsWrapper}>
@@ -76,6 +87,6 @@ export const HeaderPage = (props: HeaderPageProps) => {
           </Tabs>
         </div>
       )}
-    </Container>
+    </div>
   );
 };

@@ -20,7 +20,7 @@ import {
   FetchResponseWrapper,
   KubernetesFetcher,
   ObjectFetchParams,
-} from '@backstage/plugin-kubernetes-node';
+} from '../types/types';
 import {
   ANNOTATION_KUBERNETES_AUTH_PROVIDER,
   SERVICEACCOUNT_CA_PATH,

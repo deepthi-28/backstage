@@ -14,11 +14,7 @@
  * limitations under the License.
  */
 
-import {
-  createFrontendPlugin,
-  Extension,
-  FrontendFeature,
-} from '@backstage/frontend-plugin-api';
+import { Extension, FrontendFeature } from '@backstage/frontend-plugin-api';
 import { ExtensionParameters } from './readAppExtensionsConfig';
 import { AppNodeSpec } from '@backstage/frontend-plugin-api';
 import { OpaqueFrontendPlugin } from '@internal/frontend';
@@ -91,12 +87,6 @@ export function resolveAppNodeSpecs(options: {
     );
   }
 
-  const appPlugin =
-    plugins.find(plugin => plugin.id === 'app') ??
-    createFrontendPlugin({
-      pluginId: 'app',
-    });
-
   const configuredExtensions = [
     ...pluginExtensions.map(({ plugin, ...extension }) => {
       const internalExtension = toInternalExtension(extension);
@@ -116,8 +106,8 @@ export function resolveAppNodeSpecs(options: {
       return {
         extension: internalExtension,
         params: {
-          source: appPlugin,
-          plugin: appPlugin,
+          source: undefined,
+          plugin: undefined,
           attachTo: internalExtension.attachTo,
           disabled: internalExtension.disabled,
           config: undefined as unknown,

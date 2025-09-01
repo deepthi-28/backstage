@@ -361,13 +361,7 @@ export const EntityLayout = (props: EntityLayoutProps) => {
               UNSTABLE_extraContextMenuItems={UNSTABLE_extraContextMenuItems}
               UNSTABLE_contextMenuOptions={UNSTABLE_contextMenuOptions}
               onUnregisterEntity={() => setConfirmationDialogOpen(true)}
-              onInspectEntity={() => {
-                setSearchParams(prev => {
-                  const newParams = new URLSearchParams(prev);
-                  newParams.set('inspect', '');
-                  return newParams;
-                });
-              }}
+              onInspectEntity={() => setSearchParams('inspect')}
             />
           </>
         )}
@@ -407,21 +401,9 @@ export const EntityLayout = (props: EntityLayoutProps) => {
               typeof InspectEntityDialog
             >['initialTab']) || undefined
           }
-          onSelect={newTab =>
-            setSearchParams(prev => {
-              const newParams = new URLSearchParams(prev);
-              newParams.set('inspect', newTab);
-              return newParams;
-            })
-          }
+          onSelect={newTab => setSearchParams(`inspect=${newTab}`)}
           open
-          onClose={() =>
-            setSearchParams(prev => {
-              const newParams = new URLSearchParams(prev);
-              newParams.delete('inspect');
-              return newParams;
-            })
-          }
+          onClose={() => setSearchParams()}
         />
       )}
 

@@ -5,7 +5,7 @@
 ```ts
 import { BackendFeature } from '@backstage/backend-plugin-api';
 
-// @alpha @deprecated (undocumented)
+// @alpha (undocumented)
 const _feature: BackendFeature;
 export default _feature;
 

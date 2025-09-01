@@ -25,7 +25,7 @@ export interface ListItem {
 }
 
 const meta = {
-  title: 'Backstage UI/Card',
+  title: 'Components/Card',
   component: Card,
   subcomponents: { CardHeader, CardBody, CardFooter },
 } satisfies Meta<typeof Card>;

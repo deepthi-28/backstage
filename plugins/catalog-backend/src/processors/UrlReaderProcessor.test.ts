@@ -18,8 +18,8 @@ import {
   mockServices,
   registerMswTestHooks,
 } from '@backstage/backend-test-utils';
+import { rest } from 'msw';
 import { setupServer } from 'msw/node';
-import { HttpResponse, http } from 'msw';
 import {
   CatalogProcessorCache,
   CatalogProcessorEntityResult,
@@ -61,15 +61,13 @@ describe('UrlReaderProcessor', () => {
     };
 
     server.use(
-      http.get(`${mockApiOrigin}/component.yaml`, () =>
-        HttpResponse.json(
-          {
+      rest.get(`${mockApiOrigin}/component.yaml`, (_, res, ctx) =>
+        res(
+          ctx.set({ ETag: 'my-etag' }),
+          ctx.json({
             kind: 'component',
             metadata: { name: 'mock-url-entity' },
-          },
-          {
-            headers: { ETag: 'my-etag' },
-          },
+          }),
         ),
       ),
     );
@@ -117,8 +115,8 @@ describe('UrlReaderProcessor', () => {
       }),
     });
     server.use(
-      http.get(`${mockApiOrigin}/component.yaml`, () =>
-        HttpResponse.json(null, { status: 304 }),
+      rest.get(`${mockApiOrigin}/component.yaml`, (_, res, ctx) =>
+        res(ctx.status(304)),
       ),
     );
     const spec = {
@@ -173,8 +171,8 @@ describe('UrlReaderProcessor', () => {
     };
 
     server.use(
-      http.get(`${mockApiOrigin}/component-notfound.yaml`, () => {
-        return HttpResponse.json(null, { status: 404 });
+      rest.get(`${mockApiOrigin}/component-notfound.yaml`, (_, res, ctx) => {
+        return res(ctx.status(404));
       }),
     );
 

@@ -19,8 +19,8 @@ import chalk from 'chalk';
 import fs from 'fs-extra';
 import { resolve as resolvePath } from 'path';
 import openBrowser from 'react-dev-utils/openBrowser';
-import { rspack } from '@rspack/core';
-import { RspackDevServer } from '@rspack/dev-server';
+import webpack from 'webpack';
+import WebpackDevServer from 'webpack-dev-server';
 
 import { paths as libPaths } from '../../../../lib/paths';
 import { loadCliConfig } from '../../../config/lib/config';
@@ -55,20 +55,20 @@ DEPRECATION WARNING: React Router Beta is deprecated and support for it will be 
     resolvePath(options.targetDir ?? libPaths.targetDir, 'package.json'),
   );
 
-  let devServer: RspackDevServer | undefined = undefined;
+  let webpackServer: WebpackDevServer | undefined = undefined;
 
   let latestFrontendAppConfigs: AppConfig[] = [];
 
   /** Triggers a full reload of all clients */
   const triggerReload = () => {
-    if (devServer) {
-      devServer.invalidate();
+    if (webpackServer) {
+      webpackServer.invalidate();
 
       // For the Rspack server it's not enough to invalidate, we also need to
       // tell the browser to reload, which we do with a 'static-changed' message
-      if (!process.env.LEGACY_WEBPACK_BUILD) {
-        devServer.sendMessage(
-          devServer.webSocketServer?.clients ?? [],
+      if (process.env.EXPERIMENTAL_RSPACK) {
+        webpackServer.sendMessage(
+          webpackServer.webSocketServer?.clients ?? [],
           'static-changed',
         );
       }
@@ -122,8 +122,8 @@ DEPRECATION WARNING: React Router Beta is deprecated and support for it will be 
     },
   });
 
-  const webpack = process.env.LEGACY_WEBPACK_BUILD
-    ? (require('webpack') as typeof import('webpack'))
+  const rspack = process.env.EXPERIMENTAL_RSPACK
+    ? (require('@rspack/core') as typeof import('@rspack/core').rspack)
     : undefined;
 
   const commonConfigOptions = {
@@ -132,7 +132,7 @@ DEPRECATION WARNING: React Router Beta is deprecated and support for it will be 
     isDev: true,
     baseUrl: url,
     frontendConfig,
-    webpack,
+    rspack,
     getFrontendAppConfigs: () => {
       return latestFrontendAppConfigs;
     },
@@ -144,13 +144,15 @@ DEPRECATION WARNING: React Router Beta is deprecated and support for it will be 
     moduleFederation: options.moduleFederation,
   });
 
-  const bundler = (webpack ?? rspack) as typeof rspack;
-  const DevServer: typeof RspackDevServer = webpack
-    ? require('webpack-dev-server')
-    : RspackDevServer;
+  const bundler = (rspack ?? webpack) as typeof webpack;
+  const DevServer: typeof WebpackDevServer = rspack
+    ? require('@rspack/dev-server').RspackDevServer
+    : WebpackDevServer;
 
-  if (webpack) {
-    console.log(chalk.yellow(`⚠️  WARNING: Using legacy WebPack dev server.`));
+  if (rspack) {
+    console.log(
+      chalk.yellow(`⚠️  WARNING: Using experimental RSPack dev server.`),
+    );
   }
 
   const publicPaths = await resolveOptionalBundlingPaths({
@@ -168,7 +170,7 @@ DEPRECATION WARNING: React Router Beta is deprecated and support for it will be 
     ? bundler([config, await createConfig(publicPaths, commonConfigOptions)])
     : bundler(config);
 
-  devServer = new DevServer(
+  webpackServer = new DevServer(
     {
       hot: !process.env.CI,
       devMiddleware: {
@@ -223,8 +225,8 @@ DEPRECATION WARNING: React Router Beta is deprecated and support for it will be 
   );
 
   await new Promise<void>(async (resolve, reject) => {
-    if (devServer) {
-      devServer.startCallback((err?: Error) => {
+    if (webpackServer) {
+      webpackServer.startCallback((err?: Error) => {
         if (err) {
           reject(err);
           return;
@@ -243,7 +245,7 @@ DEPRECATION WARNING: React Router Beta is deprecated and support for it will be 
   const waitForExit = async () => {
     for (const signal of ['SIGINT', 'SIGTERM'] as const) {
       process.on(signal, () => {
-        devServer?.stop();
+        webpackServer?.stop();
         // exit instead of resolve. The process is shutting down and resolving a promise here logs an error
         process.exit();
       });

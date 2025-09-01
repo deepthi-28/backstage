@@ -3,14 +3,14 @@ import { InputError } from '@backstage/errors';
 import { z } from 'zod';
 import express from 'express';
 import Router from 'express-promise-router';
-import { todoListServiceRef } from './services/TodoListService';
+import { TodoListService } from './services/TodoListService/types';
 
 export async function createRouter({
   httpAuth,
-  todoList,
+  todoListService,
 }: {
   httpAuth: HttpAuthService;
-  todoList: typeof todoListServiceRef.T;
+  todoListService: TodoListService;
 }): Promise<express.Router> {
   const router = Router();
   router.use(express.json());
@@ -32,7 +32,7 @@ export async function createRouter({
       throw new InputError(parsed.error.toString());
     }
 
-    const result = await todoList.createTodo(parsed.data, {
+    const result = await todoListService.createTodo(parsed.data, {
       credentials: await httpAuth.credentials(req, { allow: ['user'] }),
     });
 
@@ -40,11 +40,11 @@ export async function createRouter({
   });
 
   router.get('/todos', async (_req, res) => {
-    res.json(await todoList.listTodos());
+    res.json(await todoListService.listTodos());
   });
 
   router.get('/todos/:id', async (req, res) => {
-    res.json(await todoList.getTodo({ id: req.params.id }));
+    res.json(await todoListService.getTodo({ id: req.params.id }));
   });
 
   return router;

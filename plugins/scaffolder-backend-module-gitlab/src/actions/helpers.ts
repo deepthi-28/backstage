@@ -17,7 +17,6 @@ import { parseRepoUrl } from '@backstage/plugin-scaffolder-node';
 import { ErrorLike, InputError, isError } from '@backstage/errors';
 import { ScmIntegrationRegistry } from '@backstage/integration';
 import { Gitlab } from '@gitbeaker/rest';
-import { GitbeakerRequestError } from '@gitbeaker/requester-utils';
 
 export function createGitlabApi(options: {
   integrations: ScmIntegrationRegistry;
@@ -58,13 +57,7 @@ function isGitlabError(e: unknown): e is GitlabError {
   return isError(e) && 'description' in e && typeof e.description === 'string';
 }
 
-function isGitbeakerRequestError(e: unknown): e is GitbeakerRequestError {
-  return isError(e) && e.name === 'GitbeakerRequestError';
-}
-
 export function getErrorMessage(e: unknown): string {
-  if (isGitbeakerRequestError(e) && e.cause)
-    return `${e} - ${e.cause.description}`;
   if (isGitlabError(e)) return `${e} - ${e.description}`;
   return String(e);
 }

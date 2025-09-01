@@ -184,13 +184,11 @@ export type GitlabProviderConfig = {
    * Defaults to `[\s\S]*`, which means to not filter anything
    */
   userPattern: RegExp;
-
   /**
-   * Filters found groups based on provided patterns.
+   * Filters found groups based on provided patter.
    * Defaults to `[\s\S]*`, which means to not filter anything
-   *
    */
-  groupPattern: RegExp | RegExp[];
+  groupPattern: RegExp;
 
   /**
    * If true, the provider will also add inherited (ascendant) users to the ingested groups.

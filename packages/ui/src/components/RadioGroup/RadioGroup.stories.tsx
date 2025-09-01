@@ -18,7 +18,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { RadioGroup, Radio } from './RadioGroup';
 
 const meta = {
-  title: 'Backstage UI/RadioGroup',
+  title: 'Forms/RadioGroup',
   component: RadioGroup,
 } satisfies Meta<typeof RadioGroup>;
 

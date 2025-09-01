@@ -17,7 +17,7 @@
 import yn from 'yn';
 import fs from 'fs-extra';
 import { resolve as resolvePath } from 'path';
-import { rspack, Configuration, MultiStats } from '@rspack/core';
+import webpack from 'webpack';
 import {
   measureFileSizesBeforeBuild,
   printFileSizesAfterBuild,
@@ -38,7 +38,7 @@ function applyContextToError(error: string, moduleName: string): string {
 }
 
 export async function buildBundle(options: BuildOptions) {
-  const { statsJsonEnabled, schema: configSchema, webpack } = options;
+  const { statsJsonEnabled, schema: configSchema, rspack } = options;
 
   const paths = resolveBundlingPaths(options);
   const publicPaths = await resolveOptionalBundlingPaths({
@@ -54,7 +54,7 @@ export async function buildBundle(options: BuildOptions) {
     getFrontendAppConfigs: () => options.frontendAppConfigs,
   };
 
-  const configs: Configuration[] = [];
+  const configs: webpack.Configuration[] = [];
 
   if (options.moduleFederation?.mode === 'remote') {
     // Package detection is disabled for remote bundles
@@ -119,11 +119,13 @@ export async function buildBundle(options: BuildOptions) {
     );
   }
 
-  if (webpack) {
-    console.log(chalk.yellow(`⚠️  WARNING: Using legacy WebPack bundler`));
+  if (rspack) {
+    console.log(
+      chalk.yellow(`⚠️  WARNING: Using experimental RSPack bundler.`),
+    );
   }
 
-  const { stats } = await build(configs, isCi, webpack);
+  const { stats } = await build(configs, isCi, rspack);
 
   if (!stats) {
     throw new Error('No stats returned');
@@ -157,32 +159,34 @@ export async function buildBundle(options: BuildOptions) {
 }
 
 async function build(
-  configs: Configuration[],
+  configs: webpack.Configuration[],
   isCi: boolean,
-  webpack?: typeof import('webpack'),
+  rspack?: typeof import('@rspack/core').rspack,
 ) {
-  const bundler = (webpack ?? rspack) as typeof rspack;
+  const bundler = (rspack ?? webpack) as typeof webpack;
 
-  const stats = await new Promise<MultiStats | undefined>((resolve, reject) => {
-    bundler(configs, (err, buildStats) => {
-      if (err) {
-        if (err.message) {
-          const { errors } = formatWebpackMessages({
-            errors: [err.message],
-            warnings: new Array<string>(),
-            _showErrors: true,
-            _showWarnings: true,
-          });
+  const stats = await new Promise<webpack.MultiStats | undefined>(
+    (resolve, reject) => {
+      bundler(configs, (err, buildStats) => {
+        if (err) {
+          if (err.message) {
+            const { errors } = formatWebpackMessages({
+              errors: [err.message],
+              warnings: new Array<string>(),
+              _showErrors: true,
+              _showWarnings: true,
+            });
 
-          throw new Error(errors[0]);
+            throw new Error(errors[0]);
+          } else {
+            reject(err);
+          }
         } else {
-          reject(err);
+          resolve(buildStats);
         }
-      } else {
-        resolve(buildStats);
-      }
-    });
-  });
+      });
+    },
+  );
 
   if (!stats) {
     throw new Error('Failed to compile: No stats provided');

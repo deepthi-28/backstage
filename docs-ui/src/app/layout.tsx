@@ -44,8 +44,8 @@ export default async function RootLayout({
   return (
     <html
       lang="en"
-      data-theme-mode="light"
-      data-theme-name="backstage"
+      data-theme="light"
+      data-theme-name="default"
       suppressHydrationWarning
     >
       <body>

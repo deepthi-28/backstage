@@ -21,7 +21,7 @@ import { Box } from '../Box/Box';
 import { Flex } from '../Flex';
 
 const meta = {
-  title: 'Backstage UI/Grid',
+  title: 'Layout/Grid',
   component: Grid.Root,
 } satisfies Meta<typeof Grid>;
 

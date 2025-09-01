@@ -27,7 +27,6 @@ import {
   createExtensionBlueprint,
   createExtensionDataRef,
   createExtensionInput,
-  createFrontendPlugin,
 } from '@backstage/frontend-plugin-api';
 import {
   createAppNodeInstance,
@@ -60,7 +59,7 @@ function makeSpec<TConfig, TConfigInput>(
     attachTo: extension.attachTo,
     disabled: extension.disabled,
     extension: extension as Extension<unknown, unknown>,
-    plugin: createFrontendPlugin({ pluginId: 'app' }),
+    plugin: undefined,
     ...spec,
   };
 }

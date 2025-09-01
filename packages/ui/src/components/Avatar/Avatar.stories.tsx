@@ -19,7 +19,7 @@ import { Avatar } from './index';
 import { Flex } from '../..';
 
 const meta = {
-  title: 'Backstage UI/Avatar',
+  title: 'Components/Avatar',
   component: Avatar,
 } satisfies Meta<typeof Avatar>;
 

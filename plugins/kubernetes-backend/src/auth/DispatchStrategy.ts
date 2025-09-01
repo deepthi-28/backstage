@@ -51,7 +51,6 @@ export class DispatchStrategy implements AuthenticationStrategy {
   ): Promise<KubernetesCredential> {
     const authProvider =
       clusterDetails.authMetadata[ANNOTATION_KUBERNETES_AUTH_PROVIDER];
-
     if (this.strategyMap[authProvider]) {
       return this.strategyMap[authProvider].getCredential(clusterDetails, auth);
     }

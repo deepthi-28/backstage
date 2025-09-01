@@ -19,7 +19,7 @@ import { Box } from '../Box/Box';
 import { Container } from './Container';
 
 const meta = {
-  title: 'Backstage UI/Container',
+  title: 'Layout/Container',
   component: Container,
   parameters: {
     layout: 'fullscreen',

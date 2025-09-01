@@ -28,7 +28,7 @@ export interface CreateAppOptions {
     extensionFactoryMiddleware?:
       | ExtensionFactoryMiddleware
       | ExtensionFactoryMiddleware[];
-    loadingElement?: ReactNode;
+    loadingComponent?: ReactNode;
     pluginInfoResolver?: FrontendPluginInfoResolver;
   };
   bindRoutes?(context: { bind: CreateAppRouteBinder }): void;

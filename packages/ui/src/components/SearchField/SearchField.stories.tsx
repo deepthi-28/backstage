@@ -20,12 +20,9 @@ import { Form } from 'react-aria-components';
 import { Icon } from '../Icon';
 import { Flex } from '../Flex';
 import { FieldLabel } from '../FieldLabel';
-import { ButtonIcon } from '../ButtonIcon';
-import { RiCactusLine } from '@remixicon/react';
-import { Button } from '../Button';
 
 const meta = {
-  title: 'Backstage UI/SearchField',
+  title: 'Forms/SearchField',
   component: SearchField,
   argTypes: {
     isRequired: {
@@ -153,39 +150,5 @@ export const CustomField: Story = {
         defaultValue="Custom Field"
       />
     </>
-  ),
-};
-
-export const StartCollapsed: Story = {
-  args: {
-    ...Default.args,
-    startCollapsed: true,
-  },
-
-  render: args => (
-    <Flex direction="row" gap="4">
-      <SearchField {...args} size="small" />
-      <SearchField {...args} size="medium" />
-    </Flex>
-  ),
-};
-
-export const StartCollapsedWithButtons: Story = {
-  args: {
-    ...StartCollapsed.args,
-  },
-  render: args => (
-    <Flex direction="row" gap="2" style={{ width: '100%', maxWidth: '600px' }}>
-      <SearchField {...args} size="small" />
-      <ButtonIcon icon={<RiCactusLine />} size="small" variant="secondary" />
-      <Button size="small" variant="secondary">
-        Hello world
-      </Button>
-      <SearchField {...args} size="medium" />
-      <ButtonIcon icon={<RiCactusLine />} size="medium" variant="secondary" />
-      <Button size="medium" variant="secondary">
-        Hello world
-      </Button>
-    </Flex>
   ),
 };

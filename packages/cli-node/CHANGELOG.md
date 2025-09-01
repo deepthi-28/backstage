@@ -1,11 +1,5 @@
 # @backstage/cli-node
 
-## 0.2.14
-
-### Patch Changes
-
-- d9a7835: Add `get` and `keys` methods to `Lockfile` class
-
 ## 0.2.13
 
 ### Patch Changes

@@ -18,21 +18,15 @@ import { useVersionedContext } from '@backstage/version-bridge';
 import { ReactNode } from 'react';
 import { BackwardsCompatProvider } from './BackwardsCompatProvider';
 import { ForwardsCompatProvider } from './ForwardsCompatProvider';
-import { appTreeApiRef, useApiHolder } from '@backstage/frontend-plugin-api';
 
 function BidirectionalCompatProvider(props: { children: ReactNode }) {
-  const isInOldApp = useVersionedContext<{ 1: unknown }>('app-context');
-  const isInNewApp = Boolean(useApiHolder().get(appTreeApiRef));
+  const isInNewApp = !useVersionedContext<{ 1: unknown }>('app-context');
 
-  if (isInNewApp && !isInOldApp) {
+  if (isInNewApp) {
     return <BackwardsCompatProvider {...props} />;
   }
 
-  if (isInOldApp && !isInNewApp) {
-    return <ForwardsCompatProvider {...props} />;
-  }
-
-  return props.children;
+  return <ForwardsCompatProvider {...props} />;
 }
 
 /**

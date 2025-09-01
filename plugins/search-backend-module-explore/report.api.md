@@ -7,10 +7,10 @@ import { BackendFeature } from '@backstage/backend-plugin-api';
 import { ExploreTool } from '@backstage-community/plugin-explore-common';
 import { IndexableDocument } from '@backstage/plugin-search-common';
 
-// @public @deprecated
+// @public
 const _default: BackendFeature;
 export default _default;
 
-// @public @deprecated
+// @public
 export interface ToolDocument extends IndexableDocument, ExploreTool {}
 ```

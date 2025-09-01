@@ -14,77 +14,49 @@
  * limitations under the License.
  */
 
-import type {
-  MenuTriggerProps as RAMenuTriggerProps,
-  MenuItemProps as RAMenuItemProps,
-  MenuProps as RAMenuProps,
-  MenuSectionProps as RAMenuSectionProps,
-  SeparatorProps as RAMenuSeparatorProps,
-  SubmenuTriggerProps as RAMenuSubmenuTriggerProps,
-  ListBoxProps as RAListBoxProps,
-  ListBoxItemProps as RAListBoxItemProps,
-  PopoverProps as RAPopoverProps,
-} from 'react-aria-components';
+import { Menu as MenuPrimitive } from '@base-ui-components/react/menu';
+import {
+  ForwardRefExoticComponent,
+  RefAttributes,
+  ComponentProps,
+} from 'react';
 
 /** @public */
-export interface MenuTriggerProps extends RAMenuTriggerProps {}
+export type MenuComboboxOption = {
+  label: string;
+  value: string;
+  disabled?: boolean;
+};
 
 /** @public */
-export interface SubmenuTriggerProps extends RAMenuSubmenuTriggerProps {}
-
-/** @public */
-export interface MenuProps<T>
-  extends RAMenuProps<T>,
-    Omit<RAMenuProps<T>, 'children'> {
-  placement?: RAPopoverProps['placement'];
+export interface MenuComboboxProps extends ComponentProps<'div'> {
+  options: MenuComboboxOption[];
+  value?: string[];
+  onValueChange?: (value: string[]) => void;
+  multiselect?: boolean;
+  closeParentOnEsc?: boolean;
 }
 
 /** @public */
-export interface MenuListBoxProps<T>
-  extends RAListBoxProps<T>,
-    Omit<RAListBoxProps<T>, 'children'> {
-  placement?: RAPopoverProps['placement'];
-}
-
-/** @public */
-export interface MenuAutocompleteProps<T>
-  extends RAMenuProps<T>,
-    Omit<RAMenuProps<T>, 'children'> {
-  placeholder?: string;
-  placement?: RAPopoverProps['placement'];
-}
-
-/** @public */
-export interface MenuAutocompleteListBoxProps<T>
-  extends RAListBoxProps<T>,
-    Omit<RAListBoxProps<T>, 'children'> {
-  placeholder?: string;
-  placement?: RAPopoverProps['placement'];
-}
-
-/** @public */
-export interface MenuItemProps
-  extends RAMenuItemProps,
-    Omit<RAMenuItemProps, 'children'> {
-  iconStart?: React.ReactNode;
-  children: React.ReactNode;
-  color?: 'primary' | 'danger';
-}
-
-/** @public */
-export interface MenuListBoxItemProps
-  extends RAListBoxItemProps,
-    Omit<RAListBoxItemProps, 'children'> {
-  children: React.ReactNode;
-}
-
-/** @public */
-export interface MenuSectionProps<T>
-  extends RAMenuSectionProps<T>,
-    Omit<RAMenuSectionProps<T>, 'children'> {
-  title: string;
-  children: React.ReactNode;
-}
-
-/** @public */
-export interface MenuSeparatorProps extends RAMenuSeparatorProps {}
+export type MenuComponent = {
+  Root: typeof MenuPrimitive.Root;
+  Trigger: typeof MenuPrimitive.Trigger;
+  Portal: typeof MenuPrimitive.Portal;
+  Backdrop: typeof MenuPrimitive.Backdrop;
+  Positioner: typeof MenuPrimitive.Positioner;
+  Popup: typeof MenuPrimitive.Popup;
+  Arrow: typeof MenuPrimitive.Arrow;
+  Item: typeof MenuPrimitive.Item;
+  Group: typeof MenuPrimitive.Group;
+  GroupLabel: typeof MenuPrimitive.GroupLabel;
+  RadioGroup: typeof MenuPrimitive.RadioGroup;
+  RadioItem: typeof MenuPrimitive.RadioItem;
+  RadioItemIndicator: typeof MenuPrimitive.RadioItemIndicator;
+  CheckboxItem: typeof MenuPrimitive.CheckboxItem;
+  CheckboxItemIndicator: typeof MenuPrimitive.CheckboxItemIndicator;
+  SubmenuTrigger: typeof MenuPrimitive.SubmenuTrigger;
+  Separator: typeof MenuPrimitive.Separator;
+  Combobox: ForwardRefExoticComponent<
+    MenuComboboxProps & RefAttributes<HTMLDivElement>
+  >;
+};

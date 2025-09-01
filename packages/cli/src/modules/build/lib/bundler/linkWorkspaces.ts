@@ -16,7 +16,7 @@
 
 import { relative as relativePath } from 'path';
 import { getPackages } from '@manypkg/get-packages';
-import { rspack } from '@rspack/core';
+import webpack from 'webpack';
 import { paths } from '../../../../lib/paths';
 
 /**
@@ -26,7 +26,7 @@ import { paths } from '../../../../lib/paths';
  * of react and react-dom which are always resolved from the target workspace.
  */
 export async function createWorkspaceLinkingPlugins(
-  bundler: typeof rspack,
+  bundler: typeof webpack,
   workspace: string,
 ) {
   const { packages: linkedPackages, root: linkedRoot } = await getPackages(

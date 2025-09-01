@@ -20,7 +20,28 @@ import clsx from 'clsx';
 import { useStyles } from '../../hooks/useStyles';
 import type { LinkProps } from './types';
 import { useNavigate, useHref } from 'react-router-dom';
-import { isExternalLink } from '../../utils/isExternalLink';
+
+// Helper function to determine if a link is external
+function isExternalLink(href?: string): boolean {
+  if (!href) return false;
+
+  // Check if it's an absolute URL with protocol
+  if (href.startsWith('http://') || href.startsWith('https://')) {
+    return true;
+  }
+
+  // Check if it's a protocol-relative URL
+  if (href.startsWith('//')) {
+    return true;
+  }
+
+  // Check if it's a mailto: or tel: link
+  if (href.startsWith('mailto:') || href.startsWith('tel:')) {
+    return true;
+  }
+
+  return false;
+}
 
 /** @public */
 export const Link = forwardRef<HTMLAnchorElement, LinkProps>((props, ref) => {

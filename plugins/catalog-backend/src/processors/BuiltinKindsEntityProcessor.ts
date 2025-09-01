@@ -54,7 +54,6 @@ import {
   CatalogProcessorEmit,
   processingResult,
 } from '@backstage/plugin-catalog-node';
-import { get, set } from 'lodash';
 
 /** @public */
 export class BuiltinKindsEntityProcessor implements CatalogProcessor {
@@ -82,30 +81,6 @@ export class BuiltinKindsEntityProcessor implements CatalogProcessor {
     }
 
     return false;
-  }
-
-  async preProcessEntity(entity: Entity): Promise<Entity> {
-    function sortField(field: string) {
-      const value = get(entity, field);
-      if (
-        value &&
-        Array.isArray(value) &&
-        value.every(v => typeof v === 'string')
-      ) {
-        set(entity, field, value.sort());
-      }
-    }
-
-    // Sort the fields of the entity to ensure consistent hash
-    sortField('spec.providesApis');
-    sortField('spec.consumesApis');
-    sortField('spec.dependsOn');
-    sortField('spec.dependencyOf');
-    sortField('spec.memberOf');
-    sortField('spec.children');
-    sortField('spec.members');
-
-    return entity;
   }
 
   async postProcessEntity(

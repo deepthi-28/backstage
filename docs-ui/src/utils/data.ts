@@ -154,16 +154,11 @@ export const components: Page[] = [
   {
     title: 'Table',
     slug: 'table',
-    status: 'alpha',
+    status: 'inProgress',
   },
   {
     title: 'Tabs',
     slug: 'tabs',
-    status: 'alpha',
-  },
-  {
-    title: 'TagGroup',
-    slug: 'tag-group',
     status: 'alpha',
   },
   {

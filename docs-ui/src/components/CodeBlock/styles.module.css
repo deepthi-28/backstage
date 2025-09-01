@@ -9,7 +9,7 @@
   margin-bottom: 1rem;
 }
 
-[data-theme-mode='dark'] .codeBlock {
+[data-theme='dark'] .codeBlock {
   background-color: #121212;
 }
 

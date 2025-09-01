@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-import { JsonValue } from '@backstage/types';
-
 /** @public */
 export type NotificationSeverity = 'critical' | 'high' | 'normal' | 'low';
 
@@ -52,10 +50,6 @@ export type NotificationPayload = {
    * Optional notification icon
    */
   icon?: string;
-  /**
-   * Optional additional customizable metadata.
-   */
-  metadata?: { [KMetadataKey in string]?: JsonValue };
 };
 
 /** @public */

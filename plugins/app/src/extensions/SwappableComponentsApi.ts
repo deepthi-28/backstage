@@ -20,7 +20,8 @@ import {
   ApiBlueprint,
   swappableComponentsApiRef,
 } from '@backstage/frontend-plugin-api';
-import { DefaultSwappableComponentsApi } from '../apis/SwappableComponentsApi';
+// eslint-disable-next-line @backstage/no-relative-monorepo-imports
+import { DefaultSwappableComponentsApi } from '../../../../packages/frontend-app-api/src/apis/implementations/SwappableComponentsApi';
 
 /**
  * Contains the shareable components installed into the app.
@@ -37,30 +38,12 @@ export const SwappableComponentsApi = ApiBlueprint.makeWithOverrides({
       defineParams({
         api: swappableComponentsApiRef,
         deps: {},
-        factory: () => {
-          const nonAppExtensions = inputs.components.filter(
-            i => i.node.spec.plugin?.id !== 'app',
-          );
-
-          if (nonAppExtensions.length > 0) {
-            // eslint-disable-next-line no-console
-            console.warn(
-              `SwappableComponents should only be installed as an extension in the app plugin. You can either use appPlugin.override(), or provide a module for the app-plugin with the extension there instead. Invalid extensions: ${nonAppExtensions
-                .map(i => i.node.spec.id)
-                .join(', ')}`,
-            );
-          }
-
-          const appExtensions = inputs.components.filter(
-            i => i.node.spec.plugin?.id === 'app',
-          );
-
-          return DefaultSwappableComponentsApi.fromComponents(
-            appExtensions.map(i =>
+        factory: () =>
+          DefaultSwappableComponentsApi.fromComponents(
+            inputs.components.map(i =>
               i.get(SwappableComponentBlueprint.dataRefs.component),
             ),
-          );
-        },
+          ),
       }),
     );
   },

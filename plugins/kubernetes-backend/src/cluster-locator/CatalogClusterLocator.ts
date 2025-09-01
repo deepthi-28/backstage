@@ -18,11 +18,8 @@ import {
   AuthService,
   BackstageCredentials,
 } from '@backstage/backend-plugin-api';
-import {
-  ClusterDetails,
-  KubernetesClustersSupplier,
-} from '@backstage/plugin-kubernetes-node';
-import { CATALOG_FILTER_EXISTS } from '@backstage/catalog-client';
+import { ClusterDetails, KubernetesClustersSupplier } from '../types/types';
+import { CATALOG_FILTER_EXISTS, CatalogApi } from '@backstage/catalog-client';
 import {
   ANNOTATION_KUBERNETES_API_SERVER,
   ANNOTATION_KUBERNETES_API_SERVER_CA,
@@ -34,23 +31,22 @@ import {
   ANNOTATION_KUBERNETES_DASHBOARD_PARAMETERS,
 } from '@backstage/plugin-kubernetes-common';
 import { JsonObject } from '@backstage/types';
-import { CatalogService } from '@backstage/plugin-catalog-node';
 
 function isObject(obj: unknown): obj is JsonObject {
   return typeof obj === 'object' && obj !== null && !Array.isArray(obj);
 }
 
 export class CatalogClusterLocator implements KubernetesClustersSupplier {
-  private catalogService: CatalogService;
+  private catalogClient: CatalogApi;
   private auth: AuthService;
 
-  constructor(catalogService: CatalogService, auth: AuthService) {
-    this.catalogService = catalogService;
+  constructor(catalogClient: CatalogApi, auth: AuthService) {
+    this.catalogClient = catalogClient;
     this.auth = auth;
   }
 
   static fromConfig(
-    catalogApi: CatalogService,
+    catalogApi: CatalogApi,
     auth: AuthService,
   ): CatalogClusterLocator {
     return new CatalogClusterLocator(catalogApi, auth);
@@ -71,14 +67,20 @@ export class CatalogClusterLocator implements KubernetesClustersSupplier {
       [authProviderKey]: CATALOG_FILTER_EXISTS,
     };
 
-    const clusters = await this.catalogService.getEntities(
+    const clusters = await this.catalogClient.getEntities(
       {
         filter: [filter],
       },
-      {
-        credentials:
-          options?.credentials ?? (await this.auth.getNoneCredentials()),
-      },
+      options?.credentials
+        ? {
+            token: (
+              await this.auth.getPluginRequestToken({
+                onBehalfOf: options.credentials,
+                targetPluginId: 'catalog',
+              })
+            ).token,
+          }
+        : undefined,
     );
     return clusters.items.map(entity => {
       const annotations = entity.metadata.annotations!;

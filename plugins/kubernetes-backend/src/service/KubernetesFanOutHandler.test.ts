@@ -21,8 +21,8 @@ import {
   KubernetesServiceLocator,
   ServiceLocatorRequestContext,
   ObjectToFetch,
-  KubernetesCredential,
-} from '@backstage/plugin-kubernetes-node';
+} from '../types/types';
+import { KubernetesCredential } from '../auth/types';
 import {
   KubernetesFanOutHandler,
   DEFAULT_OBJECTS,

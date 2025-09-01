@@ -127,42 +127,20 @@ Start by using the `yarn backstage-cli new` command to generate a scaffolder mod
 ```
 $ yarn backstage-cli new
 ? What do you want to create?
-  frontend-plugin - A new frontend plugin
+> backend-module - A new backend module that extends an existing backend plugin with additional features
   backend-plugin - A new backend plugin
-❯ backend-plugin-module - A new backend module that extends an existing backend plugin
-  plugin-web-library - A new web library plugin package
-  plugin-node-library - A new Node.js library plugin package
-  plugin-common-library - A new isomorphic common plugin package
-  web-library - A library package, exporting shared functionality for web environments
+  plugin - A new frontend plugin
+  node-library - A new node-library package, exporting shared functionality for backend plugins and modules
+  plugin-common - A new isomorphic common plugin package
+  plugin-node - A new Node.js library plugin package
+  plugin-react - A new web library plugin package
+  scaffolder-module - An module exporting custom actions for @backstage/plugin-scaffolder-backend
 ```
 
-When prompted, use the arrow keys to select the option to generate a `backend-plugin-module`.
-Since we want to extend the Scaffolder backend, enter `scaffolder` when prompted for the ID of the plugin to extend.
-Next, enter the ID (name) of your module. This will be appended to the `scaffolder-backend-module-` prefix. The CLI will then generate the required files and directory structure, for example:
-
-```
-? Enter the ID of the plugin [required] scaffolder
-? Enter the ID of the module [required] foo-bar
-  templating    plugins/scaffolder-backend-module-foo-bar ✔
-  backend       adding @internal/plugin-scaffolder-backend-module-foo-bar ✔
-  executing     yarn install ✔
-  executing     yarn lint --fix ✔
-
-🎉  Successfully created backend-plugin-module
-```
-
-**Directory Structure**
-
-```
-plugins
-├── README.md
-├── scaffolder-backend-module-foo-bar
-│   ├── package.json
-│   ├── README.md
-│   └── src
-│       ├── index.ts
-│       └── module.ts
-```
+When prompted, select the option to generate a backend module.
+Since we want to extend the Scaffolder backend, enter `scaffolder` when prompted for the plugin to extend.
+Next, enter a name for your module (relative to the generated `scaffolder-backend-module-` prefix),
+and the CLI will generate the required files and directory structure.
 
 ## Writing your Module
 
@@ -170,8 +148,8 @@ Once the CLI has generated the essential structure for your new scaffolder
 module, it's time to implement our templating extensions. Here we'll demonstrate
 how to create each of the supported extension types.
 
-`src/module.ts` is where the magic happens. First, we prepare to utilize the
-associated (_**alpha** phase_) API extension point by adding the below import to `src/module.ts`:
+`src/module.ts` is where the magic happens. First we prepare to utilize the
+associated (_**alpha** phase_) API extension point by adding:
 
 ```ts
 import { scaffolderTemplatingExtensionPoint } from '@backstage/plugin-scaffolder-node/alpha';

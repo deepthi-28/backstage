@@ -19,8 +19,4 @@
  *
  * @packageDocumentation
  */
-export {
-  catalogModuleGitlabOrgDiscoveryEntityProvider as default,
-  gitlabOrgEntityProviderTransformsExtensionPoint,
-  type GitlabOrgEntityProviderTransformsExtensionPoint,
-} from './catalogModuleGitlabOrgDiscoveryEntityProvider';
+export { catalogModuleGitlabOrgDiscoveryEntityProvider as default } from './catalogModuleGitlabOrgDiscoveryEntityProvider';

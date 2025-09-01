@@ -88,12 +88,8 @@ export type FrontendPluginInfoOptions = {
   manifest?: () => Promise<JsonObject>;
 };
 
-/**
- * A variant of the {@link FrontendPlugin} interface that can also be used to install overrides for the plugin.
- *
- * @public
- */
-export interface OverridableFrontendPlugin<
+/** @public */
+export interface FrontendPlugin<
   TRoutes extends { [name in string]: RouteRef | SubRouteRef } = {
     [name in string]: RouteRef | SubRouteRef;
   },
@@ -102,26 +98,6 @@ export interface OverridableFrontendPlugin<
   },
   TExtensionMap extends { [id in string]: ExtensionDefinition } = {
     [id in string]: ExtensionDefinition;
-  },
-> extends FrontendPlugin<TRoutes, TExternalRoutes> {
-  getExtension<TId extends keyof TExtensionMap>(id: TId): TExtensionMap[TId];
-  withOverrides(options: {
-    extensions: Array<ExtensionDefinition>;
-
-    /**
-     * Overrides the original info loaders of the plugin one by one.
-     */
-    info?: FrontendPluginInfoOptions;
-  }): OverridableFrontendPlugin<TRoutes, TExternalRoutes, TExtensionMap>;
-}
-
-/** @public */
-export interface FrontendPlugin<
-  TRoutes extends { [name in string]: RouteRef | SubRouteRef } = {
-    [name in string]: RouteRef | SubRouteRef;
-  },
-  TExternalRoutes extends { [name in string]: ExternalRouteRef } = {
-    [name in string]: ExternalRouteRef;
   },
 > {
   readonly $$type: '@backstage/FrontendPlugin';
@@ -133,6 +109,15 @@ export interface FrontendPlugin<
    * Loads the plugin info.
    */
   info(): Promise<FrontendPluginInfo>;
+  getExtension<TId extends keyof TExtensionMap>(id: TId): TExtensionMap[TId];
+  withOverrides(options: {
+    extensions: Array<ExtensionDefinition>;
+
+    /**
+     * Overrides the original info loaders of the plugin one by one.
+     */
+    info?: FrontendPluginInfoOptions;
+  }): FrontendPlugin<TRoutes, TExternalRoutes, TExtensionMap>;
 }
 
 /** @public */
@@ -182,12 +167,12 @@ export interface PluginOptions<
  */
 export function createFrontendPlugin<
   TId extends string,
-  TExtensions extends readonly ExtensionDefinition[],
   TRoutes extends { [name in string]: RouteRef | SubRouteRef } = {},
   TExternalRoutes extends { [name in string]: ExternalRouteRef } = {},
+  TExtensions extends readonly ExtensionDefinition[] = [],
 >(
   options: PluginOptions<TId, TRoutes, TExternalRoutes, TExtensions>,
-): OverridableFrontendPlugin<
+): FrontendPlugin<
   TRoutes,
   TExternalRoutes,
   MakeSortedExtensionsMap<TExtensions[number], TId>

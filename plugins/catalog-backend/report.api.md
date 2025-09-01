@@ -61,8 +61,6 @@ export class BuiltinKindsEntityProcessor implements CatalogProcessor {
     emit: CatalogProcessorEmit,
   ): Promise<Entity>;
   // (undocumented)
-  preProcessEntity(entity: Entity): Promise<Entity>;
-  // (undocumented)
   validateEntityKind(entity: Entity): Promise<boolean>;
 }
 

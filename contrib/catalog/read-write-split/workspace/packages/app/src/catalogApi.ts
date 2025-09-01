@@ -27,10 +27,6 @@ import {
   fetchApiRef,
 } from '@backstage/core-plugin-api';
 import { catalogApiRef } from '@backstage/plugin-catalog-react';
-import {
-  AnalyzeLocationRequest,
-  AnalyzeLocationResponse,
-} from '@backstage/plugin-catalog-common';
 
 /**
  * Implements the catalog client for frontends, by using a custom service
@@ -162,13 +158,6 @@ export class ReadWriteSplitCatalogClient implements CatalogApi {
     options?: CatalogRequestOptions,
   ): Promise<ValidateEntityResponse> {
     return this.#write.validateEntity(entity, locationRef, options);
-  }
-
-  analyzeLocation(
-    location: AnalyzeLocationRequest,
-    options?: CatalogRequestOptions,
-  ): Promise<AnalyzeLocationResponse> {
-    return this.#write.analyzeLocation(location, options);
   }
 }
 

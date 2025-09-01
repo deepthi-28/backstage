@@ -22,7 +22,7 @@ import { Flex } from '../Flex';
 import { FieldLabel } from '../FieldLabel';
 
 const meta = {
-  title: 'Backstage UI/TextField',
+  title: 'Forms/TextField',
   component: TextField,
   argTypes: {
     isRequired: {

@@ -17,13 +17,13 @@
 import {
   Extension,
   FeatureFlagConfig,
-  OverridableFrontendPlugin,
+  FrontendPlugin,
 } from '@backstage/frontend-plugin-api';
 import { JsonObject } from '@backstage/types';
 import { OpaqueType } from '@internal/opaque';
 
 export const OpaqueFrontendPlugin = OpaqueType.create<{
-  public: OverridableFrontendPlugin;
+  public: FrontendPlugin;
   versions: {
     readonly version: 'v1';
     readonly extensions: Extension<unknown>[];

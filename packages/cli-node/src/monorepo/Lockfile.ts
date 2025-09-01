@@ -32,12 +32,8 @@ type LockfileData = {
   };
 };
 
-/**
- * A single entry in a {@link Lockfile}.
- *
- * @public
- */
-export type LockfileQueryEntry = {
+/** @internal */
+type LockfileQueryEntry = {
   range: string;
   version: string;
   dataKey: string;
@@ -137,16 +133,6 @@ export class Lockfile {
     private readonly packages: Map<string, LockfileQueryEntry[]>,
     private readonly data: LockfileData,
   ) {}
-
-  /** Returns the name of all packages available in the lockfile */
-  get(name: string): LockfileQueryEntry[] | undefined {
-    return this.packages.get(name);
-  }
-
-  /** Get the entries for a single package in the lockfile */
-  keys(): IterableIterator<string> {
-    return this.packages.keys();
-  }
 
   /**
    * Creates a simplified dependency graph from the lockfile data, where each

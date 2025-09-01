@@ -20,7 +20,6 @@ import MenuItem from '@material-ui/core/MenuItem';
 import CancelIcon from '@material-ui/icons/Cancel';
 import { catalogTranslationRef } from '../../alpha/translation';
 import { useTranslationRef } from '@backstage/core-plugin-api/alpha';
-import { forwardRef } from 'react';
 
 type VisibleType = 'visible' | 'hidden' | 'disable';
 
@@ -35,11 +34,7 @@ interface UnregisterEntityProps {
   onClose: () => void;
 }
 
-// TODO: When Backstage supports only React 19+, remove the forwardRef
-export const UnregisterEntity = forwardRef<
-  HTMLLIElement,
-  UnregisterEntityProps
->((props, ref) => {
+export function UnregisterEntity(props: UnregisterEntityProps) {
   const {
     unregisterEntityOptions,
     isUnregisterAllowed,
@@ -58,16 +53,16 @@ export const UnregisterEntity = forwardRef<
         : unregisterEntityOptions?.disableUnregister === 'disable')) ??
     false;
 
+  let unregisterButton = <></>;
+
   if (unregisterEntityOptions?.disableUnregister !== 'hidden') {
-    return (
+    unregisterButton = (
       <MenuItem
-        ref={ref}
         onClick={() => {
           onClose();
           onUnregisterEntity();
         }}
         disabled={isDisabled}
-        {...props}
       >
         <ListItemIcon>
           <CancelIcon fontSize="small" />
@@ -77,5 +72,5 @@ export const UnregisterEntity = forwardRef<
     );
   }
 
-  return null;
-});
+  return <>{unregisterButton}</>;
+}

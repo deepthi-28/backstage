@@ -275,7 +275,6 @@ export type CreateWorkerOptions = {
   workingDirectory: string;
   logger: LoggerService;
   auditor?: AuditorService;
-  config?: Config;
   additionalTemplateFilters?: Record<string, TemplateFilter>;
   concurrentTasksLimit?: number;
   additionalTemplateGlobals?: Record<string, TemplateGlobal>;

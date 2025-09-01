@@ -19,7 +19,7 @@ import { Text } from './Text';
 import { Flex } from '../Flex';
 
 const meta = {
-  title: 'Backstage UI/Text',
+  title: 'Components/Text',
   component: Text,
   args: {
     children: 'Text',

@@ -287,7 +287,6 @@ export async function createRouter(
       integrations,
       logger,
       auditor,
-      config,
       workingDirectory,
       concurrentTasksLimit,
       permissions,
@@ -364,13 +363,6 @@ export async function createRouter(
         resourceType: RESOURCE_TYPE_SCAFFOLDER_TASK,
         permissions: scaffolderTaskPermissions,
         rules: taskRules,
-        getResources: async resourceRefs => {
-          return Promise.all(
-            resourceRefs.map(async taskId => {
-              return await taskBroker.get(taskId);
-            }),
-          );
-        },
       },
     ],
     permissions: scaffolderPermissions,

@@ -20,7 +20,7 @@ import { IconProvider } from './provider';
 import { icons } from './icons';
 
 const meta = {
-  title: 'Backstage UI/Icon',
+  title: 'Components/Icon',
   component: Icon,
   argTypes: {
     name: {

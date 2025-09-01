@@ -1,11 +1,5 @@
 # @backstage/theme
 
-## 0.6.8
-
-### Patch Changes
-
-- b731527: We are introducing two new data attributes on the `body` to support Backstage UI (BUI) new theming system.
-
 ## 0.6.8-next.0
 
 ### Patch Changes

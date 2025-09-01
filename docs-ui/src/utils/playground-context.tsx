@@ -8,7 +8,7 @@ import {
 import { components } from './data';
 
 type Theme = 'light' | 'dark';
-type ThemeName = 'backstage' | 'spotify';
+type ThemeName = 'legacy' | 'default' | 'custom';
 
 // Create a context with an empty array as the default value
 const PlaygroundContext = createContext<{
@@ -27,7 +27,7 @@ const PlaygroundContext = createContext<{
   setSelectedComponents: () => {},
   selectedTheme: 'light',
   setSelectedTheme: () => {},
-  selectedThemeName: 'backstage',
+  selectedThemeName: 'default',
   setSelectedThemeName: () => {},
 });
 
@@ -42,12 +42,12 @@ export const PlaygroundProvider = ({ children }: { children: ReactNode }) => {
   );
   const [selectedTheme, setSelectedTheme] = useState<Theme>('light');
   const [selectedThemeName, setSelectedThemeName] =
-    useState<ThemeName>('backstage');
+    useState<ThemeName>('default');
 
   // Load saved theme from localStorage after hydration
   useEffect(() => {
     if (isBrowser) {
-      const savedTheme = localStorage.getItem('theme-mode') as Theme;
+      const savedTheme = localStorage.getItem('theme') as Theme;
       if (savedTheme) {
         setSelectedTheme(savedTheme);
       }
@@ -67,10 +67,10 @@ export const PlaygroundProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     if (isBrowser) {
       document.documentElement.setAttribute(
-        'data-theme-mode',
+        'data-theme',
         selectedTheme || 'light',
       );
-      localStorage.setItem('theme-mode', selectedTheme || 'light');
+      localStorage.setItem('theme', selectedTheme || 'light');
     }
   }, [selectedTheme, isBrowser]);
 
@@ -78,9 +78,9 @@ export const PlaygroundProvider = ({ children }: { children: ReactNode }) => {
     if (isBrowser) {
       document.documentElement.setAttribute(
         'data-theme-name',
-        selectedThemeName || 'backstage',
+        selectedThemeName || 'default',
       );
-      localStorage.setItem('theme-name', selectedThemeName || 'backstage');
+      localStorage.setItem('theme-name', selectedThemeName || 'default');
     }
   }, [selectedThemeName, isBrowser]);
 

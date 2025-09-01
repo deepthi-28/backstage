@@ -20,7 +20,7 @@ import { Box } from './Box';
 import { Flex } from '../Flex';
 
 const meta = {
-  title: 'Backstage UI/Box',
+  title: 'Layout/Box',
   component: Box,
   argTypes: {
     as: {

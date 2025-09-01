@@ -1,3 +1,4 @@
+import React from 'react';
 import {
   createFrontendPlugin,
   PageBlueprint,
@@ -17,7 +18,7 @@ export const page = PageBlueprint.make({
 });
 
 export const {{ pluginVar }} = createFrontendPlugin({
-  pluginId: '{{pluginId}}',
+  id: '{{pluginId}}',
   extensions: [page],
   routes: {
     root: rootRouteRef,

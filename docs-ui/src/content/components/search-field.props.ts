@@ -25,10 +25,6 @@ export const searchFieldPropDefs: Record<string, PropDef> = {
     type: 'string',
     required: true,
   },
-  startCollapsed: {
-    type: 'boolean',
-    default: 'false',
-  },
   ...classNamePropDefs,
   ...stylePropDefs,
 };
@@ -45,5 +41,3 @@ export const searchFieldSizesSnippet = `<Flex direction="row" gap="4">
 </Flex>`;
 
 export const searchFieldDescriptionSnippet = `<SearchField label="Label" description="Description" placeholder="Enter a URL" />`;
-
-export const searchFieldCollapsibleSnippet = `<SearchField startCollapsed />`;

@@ -28,7 +28,6 @@ import { ComponentsGrid } from './ComponentsGrid';
 import { EntityRelationAggregation } from '../types';
 import { useTranslationRef } from '@backstage/frontend-plugin-api';
 import { orgTranslationRef } from '../../../translation';
-import Box from '@material-ui/core/Box';
 
 /** @public */
 export type OwnershipCardClassKey =
@@ -74,11 +73,6 @@ const useStyles = makeStyles(
         overflowY: 'auto',
         marginTop: 0,
       },
-      box: {
-        overflowY: 'auto',
-        padding: theme.spacing(0, 1, 1),
-        margin: theme.spacing(0, -1),
-      },
     }),
   {
     name: 'PluginOrgOwnershipCard',
@@ -94,20 +88,16 @@ export const OwnershipCard = (props: {
   relationsType?: EntityRelationAggregation;
   relationAggregation?: EntityRelationAggregation;
   entityLimit?: number;
-  maxScrollHeight?: string;
 }) => {
   const {
     variant,
     entityFilterKind,
     hideRelationsToggle,
     entityLimit = 6,
-    maxScrollHeight: propMaxScrollHeight,
   } = props;
   const relationAggregation = props.relationAggregation ?? props.relationsType;
   const relationsToggle =
     hideRelationsToggle === undefined ? false : hideRelationsToggle;
-  const maxScrollHeight =
-    variant !== 'fullHeight' ? propMaxScrollHeight : undefined;
   const classes = useStyles();
   const { entity } = useEntity();
   const { t } = useTranslationRef(orgTranslationRef);
@@ -175,15 +165,13 @@ export const OwnershipCard = (props: {
           </ListItem>
         </List>
       )}
-      <Box maxHeight={maxScrollHeight} className={classes.box}>
-        <ComponentsGrid
-          className={classes.grid}
-          entity={entity}
-          entityLimit={entityLimit}
-          relationAggregation={getRelationAggregation}
-          entityFilterKind={entityFilterKind}
-        />
-      </Box>
+      <ComponentsGrid
+        className={classes.grid}
+        entity={entity}
+        entityLimit={entityLimit}
+        relationAggregation={getRelationAggregation}
+        entityFilterKind={entityFilterKind}
+      />
     </InfoCard>
   );
 };

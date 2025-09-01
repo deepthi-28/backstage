@@ -385,9 +385,9 @@ const oidcCustomization = (z: typeof zod) =>
 
 const customProperties = (z: typeof zod) =>
   z
-    .record(z.union([z.string(), z.array(z.string())]), {
+    .record(z.string(), {
       description:
-        'Custom properties to be added to the repository (note, this only works for organization repositories). All values must be strings',
+        'Custom properties to be added to the repository (note, this only works for organization repositories)',
     })
     .optional();
 

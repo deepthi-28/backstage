@@ -14,15 +14,21 @@
  * limitations under the License.
  */
 import { Config, readDurationFromConfig } from '@backstage/config';
-import { durationToMilliseconds } from '@backstage/types';
 import { ConsumerConfig, ConsumerSubscribeTopics, KafkaConfig } from 'kafkajs';
+import { Duration } from 'luxon';
 
+/**
+ * @public
+ */
 export interface KafkaConsumerConfig {
   backstageTopic: string;
   consumerConfig: ConsumerConfig;
   consumerSubscribeTopics: ConsumerSubscribeTopics;
 }
 
+/**
+ * @public
+ */
 export interface KafkaEventSourceConfig {
   kafkaConfig: KafkaConfig;
   kafkaConsumerConfigs: KafkaConsumerConfig[];
@@ -48,7 +54,7 @@ const readOptionalHumanDurationInMs = (
 
   if (!humanDuration) return undefined;
 
-  return durationToMilliseconds(humanDuration);
+  return Duration.fromObject(humanDuration).as('milliseconds');
 };
 
 export const readConfig = (

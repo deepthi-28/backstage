@@ -22,7 +22,6 @@ import {
   FrontendFeature,
   FrontendFeatureLoader,
 } from '@backstage/frontend-plugin-api';
-import { Progress } from '@backstage/core-components';
 // eslint-disable-next-line @backstage/no-relative-monorepo-imports
 import { defaultConfigLoaderSync } from '../../core-app-api/src/app/defaultConfigLoader';
 // eslint-disable-next-line @backstage/no-relative-monorepo-imports
@@ -88,12 +87,13 @@ export interface CreateAppOptions {
       | ExtensionFactoryMiddleware[];
 
     /**
-     * The element to render while loading the app (waiting for config, features, etc).
+     * The component to render while loading the app (waiting for config,
+     * features, etc).
      *
-     * This is the `<Progress />` component from `@backstage/core-components` by default.
-     * If set to `null` then no loading fallback element is rendered at all.
+     * This is the text "Loading..." by default. If set to "null" then no loading
+     * fallback component is rendered at all.
      */
-    loadingElement?: ReactNode;
+    loadingComponent?: ReactNode;
 
     /**
      * Allows for customizing how plugin info is retrieved.
@@ -110,9 +110,9 @@ export interface CreateAppOptions {
 export function createApp(options?: CreateAppOptions): {
   createRoot(): JSX.Element;
 } {
-  let suspenseFallback = options?.advanced?.loadingElement;
+  let suspenseFallback = options?.advanced?.loadingComponent;
   if (suspenseFallback === undefined) {
-    suspenseFallback = <Progress />;
+    suspenseFallback = 'Loading...';
   }
 
   async function appLoader() {
@@ -143,10 +143,9 @@ export function createApp(options?: CreateAppOptions): {
     return { default: () => rootEl };
   }
 
-  const LazyApp = lazy(appLoader);
-
   return {
     createRoot() {
+      const LazyApp = lazy(appLoader);
       return (
         <Suspense fallback={suspenseFallback}>
           <LazyApp />

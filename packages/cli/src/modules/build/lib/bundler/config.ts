@@ -16,15 +16,16 @@
 
 import { BundlingOptions, ModuleFederationOptions } from './types';
 import { resolve as resolvePath } from 'path';
-import { rspack, Configuration } from '@rspack/core';
+import webpack from 'webpack';
 
 import { BundlingPaths } from './paths';
 import { Config } from '@backstage/config';
-import ESLintRspackPlugin from 'eslint-rspack-plugin';
-import { TsCheckerRspackPlugin } from 'ts-checker-rspack-plugin';
+import ESLintPlugin from 'eslint-webpack-plugin';
+import ForkTsCheckerWebpackPlugin from 'fork-ts-checker-webpack-plugin';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
+import { ModuleFederationPlugin } from '@module-federation/enhanced/webpack';
 import ModuleScopePlugin from 'react-dev-utils/ModuleScopePlugin';
-import { ModuleFederationPlugin } from '@module-federation/enhanced/rspack';
+import ReactRefreshPlugin from '@pmmmwh/react-refresh-webpack-plugin';
 import { paths as cliPaths } from '../../../../lib/paths';
 import fs from 'fs-extra';
 import { optimization as optimizationConfig } from './optimization';
@@ -112,14 +113,14 @@ async function readBuildInfo() {
 export async function createConfig(
   paths: BundlingPaths,
   options: BundlingOptions,
-): Promise<Configuration> {
+): Promise<webpack.Configuration> {
   const {
     checksEnabled,
     isDev,
     frontendConfig,
     moduleFederation,
     publicSubPath = '',
-    webpack,
+    rspack,
   } = options;
 
   const { plugins, loaders } = transforms(options);
@@ -146,35 +147,27 @@ export async function createConfig(
       },
     } as const;
 
-    if (webpack) {
-      const ReactRefreshPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
-      plugins.push(new ReactRefreshPlugin(refreshOptions));
-    } else {
+    if (rspack) {
       const RspackReactRefreshPlugin = require('@rspack/plugin-react-refresh');
       plugins.push(new RspackReactRefreshPlugin(refreshOptions));
+    } else {
+      plugins.push(new ReactRefreshPlugin(refreshOptions));
     }
   }
 
   if (checksEnabled) {
-    const TsCheckerPlugin = webpack
-      ? (require('fork-ts-checker-webpack-plugin') as typeof import('fork-ts-checker-webpack-plugin'))
-      : TsCheckerRspackPlugin;
-    const ESLintPlugin = webpack
-      ? (require('eslint-webpack-plugin') as typeof import('eslint-webpack-plugin'))
-      : ESLintRspackPlugin;
     plugins.push(
-      new TsCheckerPlugin({
-        typescript: { configFile: paths.targetTsConfig, memoryLimit: 8192 },
+      new ForkTsCheckerWebpackPlugin({
+        typescript: { configFile: paths.targetTsConfig, memoryLimit: 4096 },
       }),
       new ESLintPlugin({
-        cache: false, // Cache seems broken
         context: paths.targetPath,
         files: ['**/*.(ts|tsx|mts|cts|js|jsx|mjs|cjs)'],
       }),
     );
   }
 
-  const bundler = webpack ? (webpack as unknown as typeof rspack) : rspack;
+  const bundler = rspack ? (rspack as unknown as typeof webpack) : webpack;
 
   // TODO(blam): process is no longer auto polyfilled by webpack in v5.
   // we use the provide plugin to provide this polyfill, but lets look
@@ -197,11 +190,7 @@ export async function createConfig(
         config: frontendConfig,
       },
     };
-    if (webpack) {
-      // Config injection via index.html doesn't work across reloads with
-      // WebPack, so we rely on the APP_CONFIG injection instead
-      plugins.push(new HtmlWebpackPlugin(templateOptions));
-    } else {
+    if (rspack) {
       // With Rspack we inject config via index.html, this is both because we
       // can't use APP_CONFIG due to the lack of support for runtime values, but
       // also because we are able to do it and it lines up better with what the
@@ -215,6 +204,10 @@ export async function createConfig(
           options.getFrontendAppConfigs,
         ),
       );
+    } else {
+      // Config injection via index.html doesn't work across reloads with
+      // WebPack, so we rely on the APP_CONFIG injection instead
+      plugins.push(new HtmlWebpackPlugin(templateOptions));
     }
     plugins.push(
       new HtmlWebpackPlugin({
@@ -234,9 +227,9 @@ export async function createConfig(
   if (options.moduleFederation) {
     const isRemote = options.moduleFederation?.mode === 'remote';
 
-    const AdaptedModuleFederationPlugin = webpack
-      ? (require('@module-federation/enhanced/webpack')
-          .ModuleFederationPlugin as unknown as typeof ModuleFederationPlugin)
+    const AdaptedModuleFederationPlugin = rspack
+      ? (require('@module-federation/enhanced/rspack')
+          .ModuleFederationPlugin as typeof ModuleFederationPlugin)
       : ModuleFederationPlugin;
 
     const exposes = options.moduleFederation?.exposes
@@ -311,28 +304,18 @@ export async function createConfig(
   const buildInfo = await readBuildInfo();
 
   plugins.push(
-    webpack
-      ? new webpack.DefinePlugin({
-          'process.env.BUILD_INFO': JSON.stringify(buildInfo),
-          'process.env.APP_CONFIG': webpack.DefinePlugin.runtimeValue(
+    new bundler.DefinePlugin({
+      'process.env.BUILD_INFO': JSON.stringify(buildInfo),
+      'process.env.APP_CONFIG': rspack
+        ? JSON.stringify([]) // Inject via index.html instead
+        : bundler.DefinePlugin.runtimeValue(
             () => JSON.stringify(options.getFrontendAppConfigs()),
             true,
           ),
-          // This allows for conditional imports of react-dom/client, since there's no way
-          // to check for presence of it in source code without module resolution errors.
-          'process.env.HAS_REACT_DOM_CLIENT': JSON.stringify(
-            hasReactDomClient(),
-          ),
-        })
-      : new bundler.DefinePlugin({
-          'process.env.BUILD_INFO': JSON.stringify(buildInfo),
-          'process.env.APP_CONFIG': JSON.stringify([]), // Inject via index.html instead
-          // This allows for conditional imports of react-dom/client, since there's no way
-          // to check for presence of it in source code without module resolution errors.
-          'process.env.HAS_REACT_DOM_CLIENT': JSON.stringify(
-            hasReactDomClient(),
-          ),
-        }),
+      // This allows for conditional imports of react-dom/client, since there's no way
+      // to check for presence of it in source code without module resolution errors.
+      'process.env.HAS_REACT_DOM_CLIENT': JSON.stringify(hasReactDomClient()),
+    }),
   );
 
   if (options.linkedWorkspace) {
@@ -347,8 +330,9 @@ export async function createConfig(
   // These files are required by the transpiled code when using React Refresh.
   // They need to be excluded to the module scope plugin which ensures that files
   // that exist in the package are required.
-  const reactRefreshFiles = webpack
-    ? [
+  const reactRefreshFiles = rspack
+    ? []
+    : [
         require.resolve(
           '@pmmmwh/react-refresh-webpack-plugin/lib/runtime/RefreshUtils.js',
         ),
@@ -356,8 +340,7 @@ export async function createConfig(
           '@pmmmwh/react-refresh-webpack-plugin/overlay/index.js',
         ),
         require.resolve('react-refresh'),
-      ]
-    : [];
+      ];
 
   const mode = isDev ? 'development' : 'production';
   const optimization = optimizationConfig(options);
@@ -405,7 +388,7 @@ export async function createConfig(
         util: require.resolve('util/'),
       },
       // FIXME: see also https://github.com/web-infra-dev/rspack/issues/3408
-      ...(webpack && {
+      ...(!rspack && {
         plugins: [
           new ModuleScopePlugin(
             [paths.targetSrc, paths.targetDev],
@@ -438,7 +421,7 @@ export async function createConfig(
     },
     experiments: {
       lazyCompilation: yn(process.env.EXPERIMENTAL_LAZY_COMPILATION),
-      ...(!webpack && {
+      ...(rspack && {
         // We're still using `style-loader` for custom `insert` option
         css: false,
       }),

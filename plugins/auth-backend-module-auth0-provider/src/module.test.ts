@@ -59,7 +59,7 @@ describe('authModuleAuth0Provider', () => {
     expect(res.status).toEqual(302);
 
     const nonceCookie = agent.jar.getCookie('auth0-nonce', {
-      domain: '127.0.0.1',
+      domain: 'localhost',
       path: '/api/auth/auth0/handler',
       script: false,
       secure: false,

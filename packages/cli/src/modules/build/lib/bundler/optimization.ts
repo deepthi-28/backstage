@@ -14,21 +14,19 @@
  * limitations under the License.
  */
 
+import { WebpackOptionsNormalized } from 'webpack';
 import { BundlingOptions } from './types';
-import {
-  SwcJsMinimizerRspackPlugin,
-  LightningCssMinimizerRspackPlugin,
-  RspackOptionsNormalized,
-} from '@rspack/core';
+
+const { EsbuildPlugin } = require('esbuild-loader');
 
 export const optimization = (
   options: BundlingOptions,
-): RspackOptionsNormalized['optimization'] => {
-  const { isDev, webpack } = options;
+): WebpackOptionsNormalized['optimization'] => {
+  const { isDev, rspack } = options;
 
-  const MinifyPlugin = webpack
-    ? require('esbuild-loader').EsbuildPlugin
-    : SwcJsMinimizerRspackPlugin;
+  const MinifyPlugin = rspack
+    ? rspack.SwcJsMinimizerRspackPlugin
+    : EsbuildPlugin;
 
   return {
     minimize: !isDev,
@@ -44,7 +42,7 @@ export const optimization = (
         format: undefined,
         include: 'remoteEntry.js',
       }),
-      webpack ? undefined : new LightningCssMinimizerRspackPlugin(),
+      rspack && new rspack.LightningCssMinimizerRspackPlugin(),
     ],
     runtimeChunk: 'single',
     splitChunks: {
@@ -76,7 +74,7 @@ export const optimization = (
           priority: 10,
           minSize: 100000,
           minChunks: 1,
-          ...(webpack && {
+          ...(!rspack && {
             maxAsyncRequests: Infinity,
             maxInitialRequests: Infinity,
           }),

@@ -32,17 +32,18 @@ export default defineConfig({
     ? []
     : [
         {
-          command: 'yarn start example-app',
+          command: 'yarn start',
           port: 3000,
           reuseExistingServer: true,
           timeout: 60_000,
         },
-        {
-          command: 'yarn start example-backend',
-          port: 7007,
-          reuseExistingServer: true,
-          timeout: 60_000,
-        },
+        // TODO: Before encouraging e2e tests for backend we'll want to provide better utilities for mocking auth
+        // {
+        //   command: 'yarn start-backend',
+        //   port: 7007,
+        //   reuseExistingServer: true,
+        //   timeout: 60_000,
+        // },
       ],
 
   forbidOnly: !!process.env.CI,

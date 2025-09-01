@@ -19,7 +19,7 @@ import { TextField, Input, Form } from 'react-aria-components';
 import { FieldError } from './FieldError';
 
 const meta = {
-  title: 'Backstage UI/FieldError',
+  title: 'Forms/FieldError',
   component: FieldError,
 } satisfies Meta<typeof FieldError>;
 

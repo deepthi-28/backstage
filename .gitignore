@@ -184,6 +184,3 @@ knip.json
 type-docs
 docs.json
 tsconfig.typedoc.tmp.json
-
-# Storybook
-dist-storybook/

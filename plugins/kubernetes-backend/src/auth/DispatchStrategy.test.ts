@@ -19,10 +19,8 @@ import {
   KubernetesRequestAuth,
 } from '@backstage/plugin-kubernetes-common';
 import { DispatchStrategy } from './DispatchStrategy';
-import {
-  ClusterDetails,
-  AuthenticationStrategy,
-} from '@backstage/plugin-kubernetes-node';
+import { ClusterDetails } from '../types';
+import { AuthenticationStrategy } from './types';
 
 describe('getCredential', () => {
   let strategy: DispatchStrategy;

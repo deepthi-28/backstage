@@ -25,7 +25,7 @@ import { createSwappableComponent } from './createSwappableComponent';
  * @public
  */
 export const Progress = createSwappableComponent<ProgressProps>({
-  id: 'core-progress',
+  id: 'core.components.progress',
 });
 
 /**
@@ -33,14 +33,14 @@ export const Progress = createSwappableComponent<ProgressProps>({
  */
 export const NotFoundErrorPage =
   createSwappableComponent<NotFoundErrorPageProps>({
-    id: 'core-not-found-error-page',
+    id: 'core.components.notFoundErrorPage',
   });
 
 /**
  * @public
  */
 export const ErrorDisplay = createSwappableComponent<ErrorDisplayProps>({
-  id: 'core-error-display',
+  id: 'core.components.errorDisplay',
   loader: () => props =>
-    <div data-testid="core-error-display">{props.error.message}</div>,
+    <div data-testid="core.components.errorDisplay">{props.error.message}</div>,
 });

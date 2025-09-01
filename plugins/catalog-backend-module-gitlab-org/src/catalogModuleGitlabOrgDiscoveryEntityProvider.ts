@@ -17,44 +17,10 @@
 import {
   coreServices,
   createBackendModule,
-  createExtensionPoint,
 } from '@backstage/backend-plugin-api';
-import {
-  GitlabOrgDiscoveryEntityProvider,
-  UserTransformer,
-  GroupTransformer,
-} from '@backstage/plugin-catalog-backend-module-gitlab';
+import { GitlabOrgDiscoveryEntityProvider } from '@backstage/plugin-catalog-backend-module-gitlab';
 import { catalogProcessingExtensionPoint } from '@backstage/plugin-catalog-node/alpha';
 import { eventsServiceRef } from '@backstage/plugin-events-node';
-
-/**
- * Interface for {@link gitlabOrgEntityProviderTransformsExtensionPoint}.
- *
- * @public
- */
-export interface GitlabOrgEntityProviderTransformsExtensionPoint {
-  /**
-   * Set a custom transformer for transforming from GitLab users to catalog
-   * entities.
-   */
-  setUserTransformer(transformer: UserTransformer): void;
-
-  /**
-   * Set a custom transformer for transforming from GitLab groups to catalog
-   * entities.
-   */
-  setGroupTransformer(transformer: GroupTransformer): void;
-}
-
-/**
- * Extension point for runtime configuration of GitlabOrgDiscoveryEntityProvider.
- *
- * @public
- */
-export const gitlabOrgEntityProviderTransformsExtensionPoint =
-  createExtensionPoint<GitlabOrgEntityProviderTransformsExtensionPoint>({
-    id: 'catalog.gitlabOrgEntityProvider',
-  });
 
 /**
  * Registers the GitlabOrgDiscoveryEntityProvider with the catalog processing extension point.
@@ -66,27 +32,6 @@ export const catalogModuleGitlabOrgDiscoveryEntityProvider =
     pluginId: 'catalog',
     moduleId: 'gitlabOrgDiscoveryEntityProvider',
     register(env) {
-      let userTransformer: UserTransformer | undefined;
-      let groupTransformer: GroupTransformer | undefined;
-
-      env.registerExtensionPoint(
-        gitlabOrgEntityProviderTransformsExtensionPoint,
-        {
-          setUserTransformer(transformer) {
-            if (userTransformer) {
-              throw new Error('User transformer may only be set once');
-            }
-            userTransformer = transformer;
-          },
-          setGroupTransformer(transformer) {
-            if (groupTransformer) {
-              throw new Error('Group transformer may only be set once');
-            }
-            groupTransformer = transformer;
-          },
-        },
-      );
-
       env.registerInit({
         deps: {
           config: coreServices.rootConfig,
@@ -101,8 +46,6 @@ export const catalogModuleGitlabOrgDiscoveryEntityProvider =
               logger,
               events,
               scheduler,
-              userTransformer,
-              groupEntitiesTransformer: groupTransformer,
             });
           catalog.addEntityProvider(gitlabOrgDiscoveryEntityProvider);
         },
